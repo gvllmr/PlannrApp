@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Assignment</title>
+</head>
+
+<style>
+    body{
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #e0f6fc;
+    }
+</style>
+<style>
+    body {
+        font-family: "Lato", sans-serif;
+    }
+
+    .sidenav {
+        height: 100%;
+        width: 180px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #293241;
+        overflow-x: hidden;
+        padding-top: 20px;
+    }
+
+    .sidenav a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #f1f1f1;
+        display: block;
+    }
+
+    .sidenav a:hover {
+        color: #23bbe4;
+    }
+
+    .container {
+        margin-left: 180px; /* Same as the width of the sidenav */
+        font-size: 26px; /* Increased text to enable scrolling */
+        padding: 0px 10px;
+    }
+
+    @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
+    }
+</style>
+<body>
+<div class="container">
+    <h2>Add Assignment</h2>
+    <input type="text" id="title" placeholder="Title" required>
+    <input type="text" id="subject" placeholder="Subject" required>
+    <input type="date" id="dueDate" placeholder="Due Date" required>
+    <button id="insertAssignmentBtn">Add Assignment</button>
+    <p id="error-msg"></p>
+    <a href="assignments.html">Back to Assignments</a>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assignments.js"></script>
+</body>
+</html>
