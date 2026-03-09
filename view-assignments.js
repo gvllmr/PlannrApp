@@ -5,80 +5,102 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 supabase = createClient(supabaseURL, supabaseKey);
 console.log("I made it here")
 
+let allAssignments = [];
+
+
+
 async function fetchAssignments() {
     const container = document.getElementById("container");
-
-    // 1. Get the current logged-in user
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        container.innerHTML = "<p style=\"margin-left: 180px;\">Please log in to see your assignments.</p>";
+        container.innerHTML = "<p style='margin-left: 20px;'>Please log in to see your assignments.</p>";
         return;
     }
 
-    // 2. Fetch data from the "Assignments" table
-    const { data: assignments, error } = await supabase
+    const { data, error } = await supabase
         .from("Assignments")
         .select("*")
-        .eq("user_id", user.id) // Filter by the user's ID
+        .eq("user_id", user.id)
         .order("due_date", { ascending: true });
 
     if (error) {
         console.error("Error fetching assignments:", error);
-        container.innerHTML = "<p style=\"margin-left: 180px;\">Error loading assignments.</p>";
+        container.innerHTML = "<p>Error loading assignments.</p>";
         return;
     }
 
-    // 3. Check if there are no assignments
-    if (assignments.length === 0) {
-        container.innerHTML = "<p style=\"margin-left: 180px;\">No assignments found! Add one to get started.</p>";
+    // FIX 1: Use 'data' (the variable from Supabase) instead of 'assignments'
+    allAssignments = data;
+
+    if (allAssignments.length === 0) {
+        container.innerHTML = "<p>No assignments found! Add one to get started.</p>";
         return;
     }
 
-    // 4. Build the HTML list
-    container.innerHTML = ""; // Clear the loading message
-    assignments.forEach(task => {
+    // Initial render
+    renderAssignments(allAssignments);
+}
+
+// FIX 2: Move renderAssignments OUTSIDE fetchAssignments so it's a clean helper
+/*function renderAssignments(assignmentsList) {
+    const container = document.getElementById("container");
+    container.innerHTML = "";
+
+    assignmentsList.forEach(task => {
+        const typeColors = {
+            'Test': '#ff4d4d',
+            'Quiz': '#ffa500',
+            'Homework': '#4da6ff',
+            'Project': '#9933ff',
+            'Other': '#808080'
+        };
+
+        const badgeColor = typeColors[task.type] || '#808080';
         const div = document.createElement("div");
+
+        // Use 'is_completed' to match your database column name
         div.className = `assignment-card ${task.completed ? 'completed' : ''}`;
-        // Apply padding directly via JS
-        div.style.padding = "180px";
+
+        // Note: 180px padding is very large; 20px is usually standard!
+        div.style.padding = "20px";
+        div.style.marginLeft = "180px";
         div.style.marginBottom = "15px";
         div.style.border = "1px solid #eee";
-        div.innerHTML = `
-        <h3 style="${task.completed ? 'text-decoration: line-through;' : ''}">${task.title}</h3>
-        <p><strong>Subject:</strong> ${task.subject}</p>
-        <p><strong>Due:</strong> ${task.due_date}</p>
-        <div class="card-actions">
-            ${!task.completed ? `<button class="complete-btn" data-id="${task.id}">Done</button>` : '<span>✅ Finished</span>'}
-            <button class="delete-btn" data-id="${task.id}">Delete</button>
-        </div>
-        <hr>
-    `;
 
-        // Complete Button Logic
+        div.innerHTML = `
+            <h3>${task.title} <span class="badge" style="background-color: ${badgeColor}; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">${task.type}</span></h3>
+            <p><strong>Subject:</strong> ${task.subject}</p>
+            <p><strong>Due:</strong> ${task.due_date}</p>
+            <div class="card-actions">
+                ${!task.completed ? `<button class="complete-btn">Done</button>` : '<span>✅ Finished</span>'}
+                <button class="delete-btn">Delete</button>
+            </div>
+        `;
+
+        // Logic for buttons
         const completeBtn = div.querySelector(".complete-btn");
         if (completeBtn) {
-            completeBtn.addEventListener("click", () => toggleComplete(task.id, true));
-            completeBtn.addEventListener("click", async (e) => {
-                const btn = e.currentTarget;
-                btn.disabled = true; // Prevent double-taps
-                await toggleComplete(task.id, true);
-                handleCompleteAction(task.id, div, btn);
-            });
+            completeBtn.onclick = () => toggleComplete(task.id, task.completed);
         }
 
-        // Delete Button Logic
         const deleteBtn = div.querySelector(".delete-btn");
-        deleteBtn.addEventListener("click", () => deleteAssignment(task.id, div));
+        deleteBtn.onclick = () => deleteAssignment(task.id, div);
 
         container.appendChild(div);
-
-
-
-        // Add your event listeners here...
-
     });
-}
+} */
+
+// FIX 3: Move Sort Listener outside so it only gets created ONCE
+document.getElementById("sortOrder")?.addEventListener("change", (e) => {
+    const sortBy = e.target.value;
+    const sortedList = [...allAssignments].sort((a, b) => {
+        const valA = (a[sortBy] || "").toString().toLowerCase();
+        const valB = (b[sortBy] || "").toString().toLowerCase();
+        return valA < valB ? -1 : (valA > valB ? 1 : 0);
+    });
+    renderAssignments(sortedList);
+});
 
 async function deleteAssignment(id, element) {
     // Optional: Ask for confirmation

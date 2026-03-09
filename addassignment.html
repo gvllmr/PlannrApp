@@ -56,6 +56,16 @@
     <h2>Add Assignment</h2>
     <input type="text" id="title" placeholder="Title" required>
     <input type="text" id="subject" placeholder="Subject" required>
+
+    <label for="taskType">Task Type:</label>
+    <select id="taskType">
+        <option value="Homework">Homework</option>
+        <option value="Quiz">Quiz</option>
+        <option value="Test">Test</option>
+        <option value="Project">Project</option>
+        <option value="Other">Other</option>
+    </select>
+
     <input type="date" id="dueDate" placeholder="Due Date" required>
     <button id="insertAssignmentBtn">Add Assignment</button>
     <p id="error-msg"></p>
