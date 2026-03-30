@@ -1,65 +1,15 @@
-body{
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #ffffff;
+body, html {
+    height: 100%;
+    margin: 0;
 }
 
-.container{
-    max-width: 400px;
-    margin: 350px auto;
-    padding: 180px;
-    background-color: #e0f6fc;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-}
-
-button{
-    background-color: #25bff1;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-button-hover{
-    background-color: #95f8f6;
-}
-
-error-msg{
-    color: red;
-}
-
-.delete-btn {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.delete-btn:hover {
-    background-color: #cc0000;
-}
-
-.toast {
+/* Style the Toast to stay out of the way of the sidebar */
+#undo-toast {
     position: fixed;
     bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #333;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    z-index: 1000;
+    right: 20px;
+    z-index: 2000;
 }
-
-.toast.hidden { display: none; }
 
 #undo-action-btn {
     background: #ffcc00;
@@ -69,6 +19,17 @@ error-msg{
     cursor: pointer;
     font-weight: bold;
     color: #000;
+}
+
+/* Custom button style to match your sidebar theme */
+.btn-bd-primary {
+    background-color: #25bff1;
+    border-color: #95f8f6;
+    color: white;
+}
+.btn-bd-primary:hover {
+    background-color: #82d6f6;
+    border-color: #95f8f6;
 }
 
 .completed {
@@ -104,7 +65,7 @@ error-msg{
 
 /* 1. The Post-it note Layout */
 #container {
-    margin-left: 200px; /* Offset for sidenav */
+    /* Offset for sidenav */
     padding: 30px;
     display: grid;
     /* This creates the 4-5 items per row look */

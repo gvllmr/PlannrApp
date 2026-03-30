@@ -2,15 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>You've been logged out</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Logged Out | Plannr</title>
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logout-card {
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .logo-img {
+            width: 60px;
+            margin-bottom: 1.5rem;
+        }
+        .btn-plannr {
+            background-color: #25bff1;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-plannr:hover {
+            background-color: #82d6f6;
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <h1>You've been logged out</h1>
-    <a href="index.html">Log back in</a>
 
+<div class="logout-card">
+    <img src="plannrlogonotext.png" alt="Plannr Logo" class="logo-img">
+    <h1 class="h3 mb-3 fw-bold">You've been logged out</h1>
+    <p class="text-muted mb-4">Thanks for using Plannr today. Your session has ended securely.</p>
 
+    <div class="d-grid">
+        <a href="index.html" class="btn-plannr">Log back in</a>
+    </div>
+
+    <p class="mt-4 mb-0 small text-secondary">
+        Don't have an account? <a href="signup.html" class="text-decoration-none">Sign up</a>
+    </p>
 </div>
+
 </body>
 </html>
