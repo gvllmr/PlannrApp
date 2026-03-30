@@ -7,10 +7,11 @@ console.log("I made it here")
 
 //login
 const loginBtn = document.getElementById("loginBtn");
-loginBtn?.addEventListener("click", async() => {
+loginBtn?.addEventListener("click", async(e) => {
+    e.preventDefault();
     console.log("Log in clicked")
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const email = document.getElementById("floatingInput").value;
+    const password = document.getElementById("floatingPassword").value;
     const{error, session} = await supabase.auth.signInWithPassword({email, password});
 
     if(error){
@@ -22,13 +23,14 @@ loginBtn?.addEventListener("click", async() => {
 
 const signupBtn = document.getElementById("signupBtn");
 //add the click listener to the signup button
-signupBtn?.addEventListener("click", async() => {
+signupBtn?.addEventListener("click", async(d) => {
+    d.preventDefault();
     //grab the info from the signup page and store it
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const firstName = document.getElementById("firstName").value;
-    const lastName = document.getElementById("lastName").value;
-    const city = document.getElementById("city").value;
+    const email = document.getElementById("floatingInput").value;
+    const password = document.getElementById("floatingPassword").value;
+    const firstName = document.getElementById("floatingFirstName").value;
+    const lastName = document.getElementById("floatingLastName").value;
+    const city = document.getElementById("floatingCity").value;
     const{signupError, user} = await supabase.auth.signUp({email, password});
     //console.log the error
     if(signupError){

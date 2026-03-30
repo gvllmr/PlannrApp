@@ -1,23 +1,18 @@
-body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: "Roboto", sans-serif;
-}
 .container {
+    /* Removed margin: auto and display: flex from here
+       as the parent div now handles the centering */
     width: 400px;
     height: 400px;
+    background-color: #00003D;
+    padding: 50px 20px;
+    border-radius: 15px;
+    font-family: "Roboto", sans-serif;
+
+    /* Keep these to align the items INSIDE the timer */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #00003D;
-    padding: 50px 20px;
-    border-radius: 15px;
 }
 
 .timer-container {
@@ -87,6 +82,7 @@ body {
 .progressbar {
     height: 180px;
     width: 180px;
+    flex-shrink: 0;
     background: conic-gradient(crimson 0deg, rgb(243, 72, 109)
     0deg);
     border-radius: 50%;
@@ -121,4 +117,22 @@ body {
     100% {
         transform: scale(0.97);
     }
+}
+
+.music-card {
+    background: white;
+    padding: 20px;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    width: 350px;
+    border: 1px solid #e0f6fc;
+}
+
+.music-title {
+    font-family: 'Permanent Marker', cursive; /* Using your post-it font */
+    color: #293241;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    text-align: center;
 }

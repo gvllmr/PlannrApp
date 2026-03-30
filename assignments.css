@@ -1,0 +1,156 @@
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+/* Style the Toast to stay out of the way of the sidebar */
+#undo-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2000;
+}
+
+#undo-action-btn {
+    background: #ffcc00;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #000;
+}
+
+/* Custom button style to match your sidebar theme */
+.btn-bd-primary {
+    background-color: #25bff1;
+    border-color: #95f8f6;
+    color: white;
+}
+.btn-bd-primary:hover {
+    background-color: #82d6f6;
+    border-color: #95f8f6;
+}
+
+.completed {
+    background-color: #f4f4f4; /* Light gray background */ /* Gray text */
+    opacity: 0.5;             /* Faded look */
+}
+
+/*.completed span {
+    text-decoration: line-through;
+}
+
+.completed .complete-btn {
+    display: none;
+}*/
+
+.badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-left: 8px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Optional: Add a slight pulse or glow to Tests */
+.badge[style*="background-color: #ff4d4d"] {
+    box-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+}
+
+
+
+/* 1. The Post-it note Layout */
+#container {
+    /* Offset for sidenav */
+    padding: 30px;
+    display: grid;
+    /* This creates the 4-5 items per row look */
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+/* 2. Post-it Note Design */
+.post-it {
+    aspect-ratio: 1 / 1; /* Keeps them square */
+    padding: 20px;
+    box-shadow: 5px 5px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
+    position: relative;
+    cursor: default;
+}
+
+/* Realistic tilt effect */
+.post-it:nth-child(even) { transform: rotate(1.5deg); }
+.post-it:nth-child(odd) { transform: rotate(-1.5deg); }
+
+.post-it:hover {
+    transform: scale(1.05) rotate(0deg);
+    z-index: 10;
+    box-shadow: 10px 10px 20px rgba(0,0,0,0.15);
+}
+
+/* 3. Typography within the note */
+.post-it h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-family: 'Permanent Marker', cursive, Arial; /* Sharpie look */
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 5px;
+}
+
+.post-it p {
+    font-size: 1rem;
+    margin: 8px 0;
+}
+
+.post-it .due-date {
+    font-weight: bold;
+    font-size: 0.85rem;
+    text-align: right;
+    color: #444;
+}
+
+/* 4. Color Logic (Mapped to your Task Types) */
+.type-Homework { background-color: #fff984; } /* Yellow */
+.type-Quiz     { background-color: #ffd96c; } /* Orange */
+.type-Test     { background-color: #ff8282; } /* Red */
+.type-Project  { background-color: #00c4ff; } /* Blue */
+.type-Other    { background-color: #fff9f9; } /* White */
+
+.post-it.completed {
+    background-color: #d3d3d3; /* Force Gray */
+    border: 1px solid #b0b0b0;
+    opacity: 0.6; /* Makes it look faded */
+    filter: grayscale(1); /* Removes any interior colors */
+}
+
+.post-it.completed h3,
+.post-it.completed p {
+    text-decoration: line-through;
+    color: #777;
+}
+
+/* Optional: Hide the 'Done' button on grayed out tasks */
+.post-it.completed .complete-btn {
+    display: none;
+}
+
+.add-assignment-btn{
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center;     /* Centers vertically */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 180px;
+}

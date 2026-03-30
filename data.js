@@ -66,3 +66,106 @@ async function fetchProfile(){
 fetchProfile().catch((error) =>{
     console.log(error)
 })
+
+async function loadDashboardNotifications() {
+    const alertContainer = document.getElementById("urgent-alerts");
+
+    // 1. Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // 2. Fetch uncompleted assignments
+    const { data: assignments, error } = await supabase
+        .from("Assignments")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("completed", false);
+
+    if (error || !assignments) {
+        alertContainer.innerHTML = "<p>Could not load alerts.</p>";
+        return;
+    }
+
+    // 3. Filter for "Due Soon" (Next 48 Hours)
+    const now = new Date();
+    const fortyEightHoursFromNow = new Date(now.getTime() + (48 * 60 * 60 * 1000));
+
+    const upcoming = assignments.filter(task => {
+        const dueDate = new Date(task.due_date);
+        return dueDate >= now && dueDate <= fortyEightHoursFromNow;
+    });
+
+    // 4. Render Notifications
+    if (upcoming.length === 0) {
+        alertContainer.innerHTML = `
+            <div class="alert alert-success">
+                🎉 High five! No assignments due in the next 48 hours.
+            </div>`;
+    } else {
+        alertContainer.innerHTML = ""; // Clear loader
+        upcoming.forEach(task => {
+            const alertDiv = document.createElement("div");
+            alertDiv.className = "alert alert-warning d-flex justify-content-between align-items-center shadow-sm";
+            alertDiv.innerHTML = `
+                <div>
+                    <strong>⚠️ Upcoming ${task.type}:</strong> ${task.title} 
+                    <br><small class="text-muted">Due: ${task.due_date}</small>
+                </div>
+                <a href="assignments.html" class="btn btn-sm btn-outline-dark">View</a>
+            `;
+            alertContainer.appendChild(alertDiv);
+        });
+    }
+}
+
+// Run on page load
+loadDashboardNotifications();
+
+async function getUpcomingAlerts() {
+    const alertBox = document.getElementById("urgent-alerts");
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Fetch only incomplete tasks
+    const { data: assignments } = await supabase
+        .from("Assignments")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("completed", false);
+
+    const now = new Date();
+    const fortyEightHours = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
+
+    const dueSoon = assignments.filter(task => {
+        const dueDate = new Date(task.due_date);
+        const timeDiff = dueDate - now;
+        return timeDiff > 0 && timeDiff <= fortyEightHours;
+    });
+
+    if (dueSoon.length === 0) {
+        alertBox.innerHTML = "<p class='text-success mb-0'>✅ All caught up! No urgent deadlines.</p>";
+        return;
+    }
+
+    alertBox.innerHTML = dueSoon.map(task => `
+        <div class="alert alert-warning py-2 mb-2 d-flex justify-content-between align-items-center">
+            <span><strong>${task.type}:</strong> ${task.title}</span>
+            <span class="badge bg-dark">${task.due_date}</span>
+        </div>
+    `).join('');
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    // 1. First, make sure we have a user
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+        // 2. Call your notification function
+        getUpcomingAlerts();
+
+        // 3. Call your other dashboard functions (Profile, Streak, etc.)
+        fetchProfile();
+    } else {
+        // Optional: Redirect to login if no user is found
+        window.location.href = "logout.html";
+    }
+});

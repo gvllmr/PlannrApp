@@ -93,6 +93,9 @@ button.addEventListener('click', async () => {
         updateUI();
         alert("Great job! Streak updated.");
     }
+    if (!error) {
+        getUpcomingAlerts(); // Refresh alerts to remove the task they just finished!
+    }
 });
 
 function updateUI() {
