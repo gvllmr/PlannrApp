@@ -225,3 +225,60 @@ async function handleCompleteAction(taskId, taskElement, b) {
 
 // Run the function when the page loads
 fetchAssignments();
+
+
+/*post it not layout */
+
+function renderAssignments(assignmentsList) {
+    const container = document.getElementById("container");
+    container.innerHTML = "";
+
+    assignmentsList.forEach(task => {
+        const div = document.createElement("div");
+
+        // 1. Create the class string
+        const typeClass = `type-${task.type}`;
+
+        // 2. Check the 'completed' column from your DB
+        const isDoneClass = task.completed ? 'completed' : '';
+
+        div.className = `post-it ${typeClass} ${isDoneClass}`;
+
+        div.innerHTML = `
+            <div>
+                <h3>${task.title}</h3>
+                <p><strong>Subject:</strong> ${task.subject}</p>
+            </div>
+            <div>
+                <p class="due-date">📅 ${task.due_date}</p>
+                <div class="card-actions" style="margin-top: 10px; display: flex; gap: 5px;">
+                    ${!task.completed ? `<button class="complete-btn">Done</button>` : '<span>✅ Finished</span>'}
+                    <button class="delete-btn">🗑️</button>
+                </div>
+            </div>
+        `;
+
+        // Button logic
+        const completeBtn = div.querySelector(".complete-btn");
+        if (completeBtn) {
+            completeBtn.onclick = async () => {
+                // Update Supabase
+                const { error } = await supabase
+                    .from("Assignments")
+                    .update({ completed: true }) // Matches your column name
+                    .eq("id", task.id);
+
+                if (!error) {
+                    // Locally update the UI without a full refresh
+                    div.classList.add("completed");
+                    completeBtn.parentElement.innerHTML = "<span>✅ Finished</span>";
+                }
+            };
+        }
+
+        const deleteBtn = div.querySelector(".delete-btn");
+        deleteBtn.onclick = () => deleteAssignment(task.id, div);
+
+        container.appendChild(div);
+    });
+}
