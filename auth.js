@@ -51,6 +51,9 @@ signupBtn?.addEventListener("click", async(d) => {
 
 const updateBtn = document.getElementById("updateBtn");
 updateBtn?.addEventListener("click", async() => {
+    updateBtn.disabled = true;
+    updateBtn.innerText = "Updating...";
+
     const newFirstName = document.getElementById("newFirstName").value;
     const newLastName = document.getElementById("newLastName").value;
     const newCity = document.getElementById("newCity").value;
@@ -71,6 +74,8 @@ updateBtn?.addEventListener("click", async() => {
     if (updateError) {
         document.getElementById("error-msg").textContent = updateError.message;
     } else {
+        updateBtn.innerText = "Success!";
+        setTimeout(() => { window.location.href = 'display.html'; }, 1000);
         window.location.href = 'display.html';
     }
 })

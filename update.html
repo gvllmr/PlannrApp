@@ -2,22 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Update</title>
-    <link rel="stylesheet" href="Style.css">
+    <title>Update Profile | Plannr</title>
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sidebars/"/>
+    <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="sidebars.css" rel="stylesheet" />
 
+    <style>
+        body {
+            min-height: 100vh;
+        }
+        .update-card {
+            max-width: 450px;
+            width: 100%;
+            border-radius: 15px;
+        }
+        .btn-update {
+            background-color: #25bff1; /* Matches your Assignments/Sidebar purple */
+            border: none;
+            font-weight: 600;
+        }
+        .btn-update:hover {
+            background-color: #82d6f6;
+        }
+    </style>
 </head>
-<body>
-<div class="container">
-<h2>Update</h2>
-<input type="text" id="newFirstName" placeholder="New First Name" required>
-<input type="text" id="newLastName" placeholder="New Last Name" required>
-<input type="text" id="newCity" placeholder="New City" required>
-<button id="updateBtn" >Update Info</button>
-<p id="error-msg"></p>
-<a href="display.html">Back to main page</a>
+<body class="d-flex align-items-center justify-content-center">
+
+<div class="card update-card shadow-lg border-0">
+    <div class="card-body p-4">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Update Profile</h2>
+            <p class="text-muted small">Update your personal details below.</p>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="newFirstName" placeholder="First Name" required>
+            <label for="newFirstName">First Name</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="newLastName" placeholder="Last Name" required>
+            <label for="newLastName">Last Name</label>
+        </div>
+
+        <div class="form-floating mb-4">
+            <input type="text" class="form-control" id="newCity" placeholder="City" required>
+            <label for="newCity">City</label>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button id="updateBtn" class="btn btn-primary btn-update py-2">Update Info</button>
+            <a href="display.html" class="btn btn-link btn-sm text-decoration-none text-muted">Back to main page</a>
+        </div>
+
+        <p id="error-msg" class="text-danger small text-center mt-3"></p>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src = "auth.js" ></script>
+<script src="auth.js"></script>
 </body>
 </html>
