@@ -118,11 +118,11 @@ body, html {
 }
 
 /* 4. Color Logic (Mapped to your Task Types) */
-.type-Homework { background-color: #fff984; } /* Yellow */
-.type-Quiz     { background-color: #ffd96c; } /* Orange */
-.type-Test     { background-color: #ff8282; } /* Red */
-.type-Project  { background-color: #00c4ff; } /* Blue */
-.type-Other    { background-color: #fff9f9; } /* White */
+/*.type-Homework { background-color: #fff984; } !* Yellow *!*/
+/*.type-Quiz     { background-color: #ffd96c; } !* Orange *!*/
+/*.type-Test     { background-color: #ff8282; } !* Red *!*/
+/*.type-Project  { background-color: #00c4ff; } !* Blue *!*/
+/*.type-Other    { background-color: #fff9f9; } !* White *!*/
 
 .post-it.completed {
     background-color: #d3d3d3; /* Force Gray */
@@ -153,4 +153,86 @@ body, html {
     cursor: pointer;
     margin-top: 10px;
     margin-left: 180px;
+}
+.color-swatch {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.color-swatch:hover {
+    transform: scale(1.15);
+}
+
+.color-swatch.active {
+    border-color: #25bff1; /* Matches your theme color */
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px white, 0 0 0 4px #25bff1;
+}
+/* General Badge Styling */
+.type-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Specific Colors for Types (using your original logic) */
+.badge-Homework { background-color: #d1bc00; } /* Darker yellow for contrast */
+.badge-Quiz     { background-color: #ffa500; } /* Orange */
+.badge-Test     { background-color: #ff4d4d; } /* Red */
+.badge-Project  { background-color: #0099cc; } /* Blue */
+.badge-Other    { background-color: #6c757d; } /* Gray */
+
+.complete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Colors & Gradient */
+    background: linear-gradient(135deg, #25bff1 0%, #1a9bc4 100%);
+    color: white;
+
+    /* Shaping */
+    border: none;
+    padding: 6px 16px;
+    border-radius: 20px;
+
+    /* Typography */
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    /* Effects */
+    box-shadow: 0 4px 10px rgba(37, 191, 241, 0.2);
+    transition: all 0.2s ease;
+}
+
+.complete-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(37, 191, 241, 0.3);
+    filter: brightness(1.1);
+}
+
+.complete-btn:active {
+    transform: translateY(0);
+}
+
+/* Optional: Style for the "Finished" text */
+.status-badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
 }

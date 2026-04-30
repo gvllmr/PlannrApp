@@ -10,7 +10,9 @@ const insertAssignmentBtn = document.getElementById("insertAssignmentBtn");
 insertAssignmentBtn?.addEventListener("click", async () => {
     const title = document.getElementById("title").value;
     const subject = document.getElementById("subject").value;
+    const description = document.getElementById('description').value;
     const dueDate = document.getElementById("dueDate").value;
+    const selectedColor = document.getElementById('selectedColor').value;
 
     // 1. Capture the dropdown value
     const taskType = document.getElementById("taskType").value;
@@ -25,9 +27,11 @@ insertAssignmentBtn?.addEventListener("click", async () => {
             {
                 title: title,
                 subject: subject,
+                description: description,
                 due_date: dueDate,
                 user_id: userID,
-                type: taskType // Ensure this matches your column name
+                type: taskType, // Ensure this matches your column name
+                color: selectedColor // <--- Add this line!
             }
         ]);
 
@@ -38,5 +42,17 @@ insertAssignmentBtn?.addEventListener("click", async () => {
     }
 });
 
+document.querySelectorAll('.color-swatch').forEach(swatch => {
+    swatch.addEventListener('click', function() {
+        // 1. Remove 'active' class from all swatches
+        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
 
+        // 2. Add 'active' class to the clicked one
+        this.classList.add('active');
+
+        // 3. Update the hidden input value
+        const color = this.getAttribute('data-color');
+        document.getElementById('selectedColor').value = color;
+    });
+});
 // Run the function when the page loads

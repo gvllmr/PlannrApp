@@ -1,44 +1,51 @@
+/*.container {*/
+/*    !* Removed margin: auto and display: flex from here*/
+/*       as the parent div now handles the centering *!*/
+/*    width: 400px;*/
+/*    height: 400px;*/
+/*    background-color: #00003D;*/
+/*    padding: 50px 20px;*/
+/*    border-radius: 15px;*/
+/*    font-family: "Roboto", sans-serif;*/
+
+/*    !* Keep these to align the items INSIDE the timer *!*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*}*/
 .container {
-    /* Removed margin: auto and display: flex from here
-       as the parent div now handles the centering */
-    width: 400px;
-    height: 400px;
-    background-color: #00003D;
-    padding: 50px 20px;
-    border-radius: 15px;
-    font-family: "Roboto", sans-serif;
-
-    /* Keep these to align the items INSIDE the timer */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.timer-container {
-    margin-bottom: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 80%;
-}
+/*.timer-container {*/
+/*    margin-bottom: 50px;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: space-between;*/
+/*    width: 80%;*/
+/*}*/
 
-.timer-container button {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
-    color: #ffffff;
-    font-weight: bold;
-    background-color: #f3486d;
-    cursor: pointer;
-}
-/*.timer-container button: hover {
-    transform: scale(1.2);
-}*/
-.timer-container .active {
-    background-color: #db2a34;
-}
+/*.timer-container button {*/
+/*    padding: 10px;*/
+/*    border: none;*/
+/*    border-radius: 5px;*/
+/*    box-shadow: 1px 1px 2px rgba(0, 0, 0, 1);*/
+/*    color: #ffffff;*/
+/*    font-weight: bold;*/
+/*    background-color: #f3486d;*/
+/*    cursor: pointer;*/
+/*}*/
+/*!*.timer-container button: hover {*/
+/*    transform: scale(1.2);*/
+/*}*!*/
+/*.timer-container .active {*/
+/*    background-color: #db2a34;*/
+/*}*/
 
 #longbrkbtn {
     display: none;
@@ -58,27 +65,39 @@
     transform: scale(1.2);
 }*/
 
-#startbtn,
-#pausebtn,
-#resetbtn {
-    padding: 10px 20px;
+/*#togglebtn,*/
+/*#resetbtn {*/
+/*    padding: 10px 20px;*/
+/*    border: none;*/
+/*    border-radius: 5px;*/
+/*    box-shadow: 1px 1px 2px rgba(0, 0, 0, 1);*/
+/*    color: #ffffff;*/
+/*    font-weight: bold;*/
+/*    background-color: #f3486d;*/
+/*    cursor: pointer;*/
+/*}*/
+
+#togglebtn {
+    background-color: #25bff1;
     border: none;
-    border-radius: 5px;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
+    padding: 15px 50px;
+    font-size: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(37, 191, 241, 0.4);
+}
+
+/*#resetbtn {*/
+/*    background: transparent;*/
+/*    border: 1px solid rgba(255, 255, 255, 0.2);*/
+/*    color: rgba(255, 255, 255, 0.5);*/
+/*    margin-left: 10px;*/
+/*}*/
+
+#resetbtn:hover {
     color: #ffffff;
-    font-weight: bold;
-    background-color: #f3486d;
-    cursor: pointer;
+    border-color: #ffffff;
 }
-#startbtn {
-    background-color: #008000;
-}
-#pausebtn {
-    background-color: #db2a34;
-}
-#resetbtn {
-    background-color: #ffa600;
-}
+
 .progressbar {
     height: 180px;
     width: 180px;
@@ -102,11 +121,11 @@
     align-items: center;
     justify-content: center;
 }
-.progressbar-number {
-    color: #ffffff;
-    font-weight: 900;
-    font-size: 2rem;
-}
+/*.progressbar-number {*/
+/*    color: #ffffff;*/
+/*    font-weight: 900;*/
+/*    font-size: 2rem;*/
+/*}*/
 @keyframes pulse {
     0% {
         transform: scale(0.97);
@@ -129,10 +148,134 @@
 }
 
 .music-title {
-    font-family: 'Permanent Marker', cursive; /* Using your post-it font */
+    font-family: sans-serif; /* Using your post-it font */
     color: #293241;
     margin-top: 0;
     margin-bottom: 15px;
     font-size: 1.5rem;
     text-align: center;
+}
+
+.function-buttons button.active {
+    background-color: #25bff1; /* Your brand blue */
+    color: white;
+    border-color: #1a8fb5;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
+}
+
+.btn-start-style {
+    background-color: #008000 !important;
+}
+
+/* The "Pause" state (Crimson/Red) */
+.btn-pause-style {
+    background-color: #db2a34 !important;
+}
+
+/* Target the main area specifically */
+.flex-fill.d-flex.align-items-center {
+    background-color: #00003D !important;
+    color: white !important;
+    min-height: 100vh;
+}
+
+/* Make the timer text massive and visible */
+.progressbar-number {
+    font-size: 8rem !important;
+    font-weight: 800;
+    color: #ffffff !important;
+    margin: 20px 0;
+}
+
+/* Style the mode buttons (Pomodoro, Short Break, etc) */
+.timer-container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 50px;
+    display: inline-block;
+    margin-bottom: 30px;
+}
+
+.timer-container button {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 8px 20px;
+    border-radius: 30px;
+    transition: 0.3s;
+}
+
+.timer-container button.active {
+    background: #25bff1 !important;
+    color: white !important;
+}
+
+/* Reset Button Link fix */
+#resetbtn {
+    color: rgba(255, 255, 255, 0.6) !important;
+    text-decoration: none;
+    margin-left: 20px;
+    background: none;
+    border: none;
+}
+
+.progressbar-number {
+    font-size: 8rem; /* Large, bold focus */
+    font-weight: 700;
+    font-family: 'Courier New', Courier, monospace; /* Monospaced keeps numbers stable */
+    letter-spacing: -2px;
+    text-shadow: 0 0 20px rgba(37, 191, 241, 0.3); /* Subtle glow using your accent blue */
+}
+
+.btn-start-style {
+    background-color: #25bff1 !important; /* Your brand blue */
+    border-color: #25bff1 !important;
+    color: white !important;
+}
+
+.btn-pause-style {
+    background-color: transparent !important;
+    border: 2px solid #ff4b5c !important; /* A soft red for pause */
+    color: #ff4b5c !important;
+}
+.main-focus-area {
+    background-color: #00003D !important;
+    min-height: 100vh;
+    color: white;
+}
+
+.progressbar-number {
+    font-size: 8rem;
+    font-weight: 800;
+    margin: 20px 0;
+    font-family: monospace; /* Keeps numbers from jumping around */
+}
+
+/* Ensure the Spotify card doesn't look weird */
+.card.bg-dark {
+    background-color: #0a0a2a !important; /* Slightly lighter than main bg */
+}
+.btn-pause {
+    background-color: #ff4b5c !important; /* Soft Focus Red */
+    border-color: #ff4b5c !important;
+    color: white !important;
+    box-shadow: 0 0 15px rgba(255, 75, 92, 0.4) !important;
+}
+
+/* Custom Start State (to match your blue) */
+.btn-start {
+    background-color: #25bff1 !important;
+    border-color: #25bff1 !important;
+    color: white !important;
+    box-shadow: 0 0 15px rgba(37, 191, 241, 0.4) !important;
+}
+.btn-group .btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-group .btn-outline-light.active {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-color: white !important;
 }

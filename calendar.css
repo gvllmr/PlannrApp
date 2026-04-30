@@ -26,7 +26,7 @@ main {
 /*}*/
 .wrapper{
     width: 450px;
-    background: #fff;
+    background: var(--bs-body-bg);
     border-radius: 10px;
     box-shadow: 0 15px 40px rgba(0,0,0,0.12);
 }
@@ -125,14 +125,13 @@ header .current-date{
 .dot {
     height: 5px;
     width: 5px;
-    background-color: #4A90E2; /* Blue for pending */
     border-radius: 50%;
     display: inline-block;
 }
 
-.dot.completed {
-    background-color: #ccc; /* Gray for completed */
-}
+/*.dot.completed {*/
+/*    background-color: #ccc; !* Gray for completed *!*/
+/*}*/
 
 
 .app-container {
@@ -222,4 +221,104 @@ header .current-date{
 #day-assignment-list {
     max-height: 500px;
     overflow-y: auto;
+}
+
+.assignment-done {
+    text-decoration: line-through;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+/* Optional: styling the checkbox for a cleaner look */
+.assignment-checkbox {
+    width: 1.2em;
+    height: 1.2em;
+    cursor: pointer;
+}
+.complete-btn {
+    min-width: 85px; /* Keeps buttons uniform size regardless of text length */
+    transition: all 0.3s ease;
+}
+
+.task-title {
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+.status-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(5px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+/* Container for the dots under the date number */
+.day-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 2px;
+    height: 6px; /* Keeps the calendar row height stable */
+}
+
+
+/* Ensure the calendar day li can handle vertical stacking */
+.calendar .days li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 0;
+}
+/* Ensure the day number and dots stack vertically */
+.calendar .days li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80px; /* Adjust based on your calendar size */
+}
+
+.day-number {
+    z-index: 2;
+    font-weight: 500;
+}
+
+/* Container for dots */
+.task-dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 4px;
+    min-height: 8px; /* Prevents layout jump when dots appear */
+}
+
+/* Individual Dot */
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    /* No background-color here! */
+}
+.task-title {
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.text-decoration-line-through {
+    opacity: 0.6;
+}
+
+/* Optional: subtle pulse when clicking */
+.toggle-btn {
+    transition: background-color 0.2s, transform 0.1s;
+}
+.toggle-btn:active {
+    transform: scale(0.95);
 }

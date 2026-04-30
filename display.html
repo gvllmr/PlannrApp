@@ -115,6 +115,31 @@
             transform: scale(1.05);
             background-color: #82d6f6;
         }
+        #streak-display {
+            transition: all 0.5s ease;
+        }
+        body {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+        }
+
+        /* Fix for profile and card backgrounds in dark mode */
+        [data-bs-theme="dark"] #profile-data,
+        [data-bs-theme="dark"] .card-header,
+        [data-bs-theme="dark"] #streak-display {
+            background-color: var(--bs-tertiary-bg) !important;
+            color: var(--bs-body-color) !important;
+        }
+
+        [data-bs-theme="dark"] .card {
+            background-color: var(--bs-secondary-bg);
+            border: 1px solid var(--bs-border-color);
+        }
+
+        /* Keep the sidebar dark even in light mode (optional, based on your current class text-bg-dark) */
+        .text-bg-dark {
+            background-color: #212529 !important;
+        }
     </style>
 </head>
 <body>
@@ -143,76 +168,6 @@
         ></path>
     </symbol>
 </svg>
-<div
-        class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle"
->
-    <button
-            class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
-            id="bd-theme"
-            type="button"
-            aria-expanded="false"
-            data-bs-toggle="dropdown"
-            aria-label="Toggle theme (auto)"
-    >
-        <svg class="bi my-1 theme-icon-active" aria-hidden="true">
-            <use href="#circle-half"></use>
-        </svg>
-        <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
-    </button>
-    <ul
-            class="dropdown-menu dropdown-menu-end shadow"
-            aria-labelledby="bd-theme-text"
-    >
-        <li>
-            <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center"
-                    data-bs-theme-value="light"
-                    aria-pressed="false"
-            >
-                <svg class="bi me-2 opacity-50" aria-hidden="true">
-                    <use href="#sun-fill"></use>
-                </svg>
-                Light
-                <svg class="bi ms-auto d-none" aria-hidden="true">
-                    <use href="#check2"></use>
-                </svg>
-            </button>
-        </li>
-        <li>
-            <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center"
-                    data-bs-theme-value="dark"
-                    aria-pressed="false"
-            >
-                <svg class="bi me-2 opacity-50" aria-hidden="true">
-                    <use href="#moon-stars-fill"></use>
-                </svg>
-                Dark
-                <svg class="bi ms-auto d-none" aria-hidden="true">
-                    <use href="#check2"></use>
-                </svg>
-            </button>
-        </li>
-        <li>
-            <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center active"
-                    data-bs-theme-value="auto"
-                    aria-pressed="true"
-            >
-                <svg class="bi me-2 opacity-50" aria-hidden="true">
-                    <use href="#circle-half"></use>
-                </svg>
-                Auto
-                <svg class="bi ms-auto d-none" aria-hidden="true">
-                    <use href="#check2"></use>
-                </svg>
-            </button>
-        </li>
-    </ul>
-</div>
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
     <symbol id="bootstrap" viewBox="0 0 118 94">
         <title>Bootstrap</title>
@@ -327,6 +282,33 @@
             </li>
         </ul>
         <hr />
+        <div class="dropdown mb-3">
+            <button class="btn btn-link nav-link dropdown-toggle d-flex align-items-center text-white"
+                    id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown">
+                <svg class="bi me-2 opacity-50 theme-icon-active" width="16" height="16"><use href="#circle-half"></use></svg>
+                <span id="bd-theme-text">Theme</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow" aria-labelledby="bd-theme-text">
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+                        <svg class="bi me-2 opacity-50" width="16" height="16"><use href="#sun-fill"></use></svg>
+                        Light
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+                        <svg class="bi me-2 opacity-50" width="16" height="16"><use href="#moon-stars-fill"></use></svg>
+                        Dark
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
+                        <svg class="bi me-2 opacity-50" width="16" height="16"><use href="#circle-half"></use></svg>
+                        Auto
+                    </button>
+                </li>
+            </ul>
+        </div>
         <div class="dropdown">
             <a
                     href="#"
@@ -370,12 +352,18 @@
 
             <div class="col-md-4">
                 <div class="card shadow-sm border-0 text-center p-3">
-                    <h4>Study Streak</h4>
-                    <div id="streak-display" style="font-size: 3rem;">🔥 <span id="streak-count">0</span></div>
-                    <button id="complete-task-btn" class="btn btn-bd-primary w-100 mt-2">
-                        Mark Today's Goals Done
-                    </button>
-                    <p id="message" class="mt-2 small"></p>
+                    <h4 class="mb-1">Study Streak</h4>
+                    <div id="streak-container" class="py-2">
+                        <div id="streak-display" style="font-size: 3rem;">
+                            🔥 <span id="streak-count">0</span>
+                        </div>
+                        <p id="streak-status" class="text-muted small fw-bold">Loading streak...</p>
+                    </div>
+
+                    <a href="assignments.html" class="btn btn-bd-primary w-100 mt-2">
+                        Go to Assignments
+                    </a>
+                    <p id="message" class="mt-2 small text-success"></p>
                 </div>
             </div>
         </div>
@@ -389,7 +377,47 @@
 ></script>
 <script src="sidebars.js" class="astro-vvvwv3sm"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data.js"></script>
+
+<script src="init-supabase.js"></script>
+
 <script src="streak.js"></script>
+<script src="data.js"></script>
+<script src="view-assignments.js"></script>
+
+<script>
+    (() => {
+        'use strict'
+        const getStoredTheme = () => localStorage.getItem('theme')
+        const setStoredTheme = theme => localStorage.setItem('theme', theme)
+
+        const getPreferredTheme = () => {
+            const storedTheme = getStoredTheme()
+            if (storedTheme) return storedTheme
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+
+        const setTheme = theme => {
+            if (theme === 'auto') {
+                document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
+            } else {
+                document.documentElement.setAttribute('data-bs-theme', theme)
+            }
+        }
+
+        setTheme(getPreferredTheme())
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-bs-theme-value]')
+                .forEach(toggle => {
+                    toggle.addEventListener('click', () => {
+                        const theme = toggle.getAttribute('data-bs-theme-value')
+                        setStoredTheme(theme)
+                        setTheme(theme)
+                    })
+                })
+        })
+    })()
+</script>
+
 </body>
 </html>

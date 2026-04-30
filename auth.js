@@ -22,31 +22,49 @@ loginBtn?.addEventListener("click", async(e) => {
 });
 
 const signupBtn = document.getElementById("signupBtn");
-//add the click listener to the signup button
-signupBtn?.addEventListener("click", async(d) => {
+signupBtn?.addEventListener("click", async (d) => {
     d.preventDefault();
-    //grab the info from the signup page and store it
+
     const email = document.getElementById("floatingInput").value;
     const password = document.getElementById("floatingPassword").value;
     const firstName = document.getElementById("floatingFirstName").value;
     const lastName = document.getElementById("floatingLastName").value;
-    const city = document.getElementById("floatingCity").value;
-    const{signupError, user} = await supabase.auth.signUp({email, password});
-    //console.log the error
-    if(signupError){
-        document.getElementById("error-msg").textContent = signupError.message;
-    } else {
-        const {insertError} = await supabase.from("PlannrInfo").insert([{
-            first_name: firstName, last_name: lastName, city: city, email: email, streak: 0
-        }]);
 
-        if (insertError) {
-            document.getElementById("error-msg").textContent = insertError.message;
-        } else {
-            window.location.href = 'display.html';
-        }
+    // 1. Attempt the Auth Signup
+    // Note: destructuring { data, error } is the standard Supabase V2 syntax
+    const { data, error: signupError } = await supabase.auth.signUp({
+        email,
+        password,
+    });
+
+    if (signupError) {
+        document.getElementById("error-msg").textContent = signupError.message;
+        return; // Stop execution if auth fails
     }
-})
+
+    /* 2. Check if user was actually created.
+       If email confirmation is on, 'user' exists but 'identities' might be empty
+       if the email is a duplicate.
+    */
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+        document.getElementById("error-msg").textContent = "Email already registered. Please log in.";
+        return;
+    }
+
+    // 3. Proceed to insert into your custom table
+    const { error: insertError } = await supabase.from("PlannrInfo").insert([{
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        streak: 0
+    }]);
+
+    if (insertError) {
+        document.getElementById("error-msg").textContent = insertError.message;
+    } else {
+        window.location.href = 'display.html';
+    }
+});
 
 
 const updateBtn = document.getElementById("updateBtn");
@@ -56,7 +74,6 @@ updateBtn?.addEventListener("click", async() => {
 
     const newFirstName = document.getElementById("newFirstName").value;
     const newLastName = document.getElementById("newLastName").value;
-    const newCity = document.getElementById("newCity").value;
 
     const {data: userData, error: userErr} = await supabase.auth.getUser();
     if(userErr || !userData?.user){

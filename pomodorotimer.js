@@ -1,16 +1,18 @@
-const startBtn = document.querySelector("#startbtn");
-const stopBtn = document.querySelector("#pausebtn");
 const resetBtn = document.querySelector("#resetbtn");
-const progressbar = document.querySelector(".progressbar");
-const progressbarNumber = document.querySelector(".progressbar .progressbar-number");
+const progressbarNumber = document.querySelector(".progressbar-number");
 const pomodoroBtn = document.getElementById("pomodorobtn");
 const shortbrkBtn = document.getElementById("shortbrkbtn");
 const longbrkBtn = document.getElementById("longbrkbtn");
 const pomCount = document.querySelector(".pomdoro-count");
 
+const toggleBtn = document.getElementById('togglebtn');
+let isRunning = false;
+
+toggleBtn.classList.add('btn-start-style');
+
 let pomdoroCount = 0;
 const pomodorountilLongbrk = 4;
-const pomodorotimer = 1500; /* 25 minutes*/
+const pomodorotimer = 1500; /* 25 minutes = 1500*/
 const shortbreaktimer = 300; /* 5 minutes*/
 const longbreaktimer = 900; /* 20 minutes*/
 let timerValue = pomodorotimer;
@@ -18,14 +20,6 @@ let multipliervalue = 360 / timerValue;
 let progressInterval;
 let pomodoroType = "POMODORO";
 
-startBtn.addEventListener("click", () => {
-    startTimer();
-    startBtn.disabled = true;
-});
-stopBtn.addEventListener("click", () => {
-    pauseTimer();
-    startBtn.disabled = false;
-});
 pomodoroBtn.addEventListener("click", () => {
     setTimeType("POMODORO");
 });
@@ -36,35 +30,56 @@ longbrkBtn.addEventListener("click", () => {
     setTimeType("LONGBREAK");
 });
 resetBtn.addEventListener("click", () => {
+    isRunning = false;
+    toggleBtn.innerText = "Start";
+    toggleBtn.classList.remove('btn-pause-style');
+    toggleBtn.classList.add('btn-start-style');
     resetTimer();
-    startBtn.disabled = false;
+});
+
+toggleBtn.addEventListener('click', () => {
+    isRunning = !isRunning;
+
+    if (isRunning) {
+        startTimer();
+        toggleBtn.innerText = "Pause";
+        // Remove ALL blue classes and add red
+        toggleBtn.classList.remove('btn-primary', 'btn-start');
+        toggleBtn.classList.add('btn-pause');
+    } else {
+        pauseTimer();
+        toggleBtn.innerText = "Start";
+        // Remove red class and add blue back
+        toggleBtn.classList.remove('btn-pause');
+        toggleBtn.classList.add('btn-start');
+    }
 });
 
 function startTimer() {
+    // Safety check: clear any existing interval before starting a new one
+    clearInterval(progressInterval);
+
     progressInterval = setInterval(() => {
         timerValue--;
-        console.log(timerValue);
         setProgressInfo();
-        if (timerValue === 0) {
+
+        if (timerValue <= 0) {
             clearInterval(progressInterval);
-            pomdoroCount++;
-            pomCount.style.display = "block";
-            pomCount.style.color = "white";
-            pomCount.style.fontSize = "30px";
-            pomCount.textContent = `Pomodoro Count ${pomdoroCount}`;
-            if (pomdoroCount % pomodorountilLongbrk === 0) {
-                longbrkBtn.style.display = "flex";
-            }
-            setTimeType(pomodoroType);
+            isRunning = false; // Reset toggle state
+            toggleBtn.innerText = "Start";
+            toggleBtn.classList.replace('btn-pause-style', 'btn-start-style');
+
+            handleTimerCompletion(); // Separate logic for clean code
         }
     }, 1000);
 }
 
 function setProgressInfo() {
+    // Update the text in the h1
     progressbarNumber.textContent = `${FormatNumbertoString(timerValue)}`;
-    progressbar.style.background = `conic-gradient(rgb(243, 72, 109) ${
-        timerValue * multipliervalue
-    }deg,crimson 0deg)`;
+
+    // Logic for updating the title tag (browser tab) so you can see time while away
+    document.title = `${FormatNumbertoString(timerValue)} - Plannr`;
 }
 
 function FormatNumbertoString(number) {
@@ -77,23 +92,32 @@ function FormatNumbertoString(number) {
 
 function pauseTimer() {
     clearInterval(progressInterval);
+    toggleBtn.classList.replace('btn-start-style', 'btn-pause-style');
+
 }
 
 function setTimeType(type) {
     pomodoroType = type;
-    if (type === "POMODORO") {
-        pomodoroBtn.classList.add("active");
-        shortbrkBtn.classList.remove("active");
-        longbrkBtn.classList.remove("active");
-    } else if (type === "SHORTBREAK") {
-        pomodoroBtn.classList.remove("active");
-        shortbrkBtn.classList.add("active");
-        longbrkBtn.classList.remove("active");
-    } else {
-        pomodoroBtn.classList.remove("active");
-        shortbrkBtn.classList.remove("active");
-        longbrkBtn.classList.add("active");
+
+    clearInterval(progressInterval);
+    isRunning = false;
+    toggleBtn.innerText = "Start";
+
+    // UI Cleanup for Toggle Button
+    toggleBtn.classList.remove('btn-pause', 'btn-pause-style');
+    toggleBtn.classList.add('btn-start', 'btn-start-style');
+
+    // Button Group Active States
+    pomodoroBtn.classList.toggle("active", type === "POMODORO");
+    shortbrkBtn.classList.toggle("active", type === "SHORTBREAK");
+    longbrkBtn.classList.toggle("active", type === "LONGBREAK");
+
+    // CRITICAL: If we are switching TO a long break,
+    // we must ensure the button is visible.
+    if (type === "LONGBREAK") {
+        longbrkBtn.classList.remove('d-none');
     }
+
     resetTimer();
 }
 
@@ -107,4 +131,31 @@ function resetTimer() {
                 : longbreaktimer;
     multipliervalue = 360 / timerValue;
     setProgressInfo();
+}
+
+function handleTimerCompletion() {
+    if (pomodoroType === "POMODORO") {
+        pomdoroCount++;
+
+        // Use a standard selector if pomCount isn't behaving
+        if (pomCount) {
+            pomCount.style.display = "block";
+            pomCount.textContent = `Pomodoro Count: ${pomdoroCount}`;
+        }
+
+        if (pomdoroCount % pomodorountilLongbrk === 0) {
+            // 1. Reveal the button
+            longbrkBtn.classList.remove('d-none');
+            longbrkBtn.style.display = "inline-block"; // Force display if d-none fails
+
+            // 2. Switch to long break
+            alert("Time for a long break!");
+            setTimeType("LONGBREAK");
+        } else {
+            alert("Pomodoro finished! Take a short break.");
+            setTimeType("SHORTBREAK");
+        }
+    } else {
+        setTimeType("POMODORO");
+    }
 }

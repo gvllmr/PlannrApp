@@ -99,21 +99,21 @@
         .delete-btn:hover {
             background-color: #cc0000;
         }
-        #complete-task-btn {
-            display: block;
-            background-color: #25bff1;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-weight: bold;
-            transition: transform 0.2s;
-        }
+        /*#complete-task-btn {*/
+        /*    display: block;*/
+        /*    background-color: #25bff1;*/
+        /*    color: white;*/
+        /*    border: none;*/
+        /*    padding: 12px 24px;*/
+        /*    border-radius: 30px;*/
+        /*    font-weight: bold;*/
+        /*    transition: transform 0.2s;*/
+        /*}*/
 
-        #complete-task-btn:hover {
-            transform: scale(1.05);
-            background-color: #82d6f6;
-        }
+        /*#complete-task-btn:hover {*/
+        /*    transform: scale(1.05);*/
+        /*    background-color: #82d6f6;*/
+        /*}*/
         .toast {
             position: fixed;
             bottom: 20px;
@@ -146,6 +146,39 @@
             background-color: #f4f4f4; /* Light gray background */ /* Gray text */
             opacity: 0.5;             /* Faded look */
         }
+        .assignment-title {
+            /* Ensures long words (like "BioinformaticsProject") don't break the layout */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+
+            /* Limits text to 2 lines and adds "..." if it's too long */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+
+            /* Aesthetics */
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        /* If the Post-it itself is too small, ensure it has a minimum size
+           but can grow if needed, or stays square */
+        .post-it {
+            min-height: 150px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        #modalTitle {
+            word-wrap: break-word;       /* Older browsers */
+            overflow-wrap: break-word;  /* Standard */
+            word-break: break-word;     /* Specifically for long strings of 'aaaaa' */
+            white-space: normal;        /* Ensures it doesn't try to stay on one line */
+            max-width: 100%;            /* Keeps it within the modal width */
+        }
     </style>
 </head>
 <body>
@@ -174,76 +207,6 @@
         ></path>
     </symbol>
 </svg>
-<div
-        class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle"
->
-    <button
-            class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
-            id="bd-theme"
-            type="button"
-            aria-expanded="false"
-            data-bs-toggle="dropdown"
-            aria-label="Toggle theme (auto)"
-    >
-        <svg class="bi my-1 theme-icon-active" aria-hidden="true">
-            <use href="#circle-half"></use>
-        </svg>
-        <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
-    </button>
-    <ul
-            class="dropdown-menu dropdown-menu-end shadow"
-            aria-labelledby="bd-theme-text"
-    >
-        <li>
-            <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center"
-                    data-bs-theme-value="light"
-                    aria-pressed="false"
-            >
-                <svg class="bi me-2 opacity-50" aria-hidden="true">
-                    <use href="#sun-fill"></use>
-                </svg>
-                Light
-                <svg class="bi ms-auto d-none" aria-hidden="true">
-                    <use href="#check2"></use>
-                </svg>
-            </button>
-        </li>
-        <li>
-            <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center"
-                    data-bs-theme-value="dark"
-                    aria-pressed="false"
-            >
-                <svg class="bi me-2 opacity-50" aria-hidden="true">
-                    <use href="#moon-stars-fill"></use>
-                </svg>
-                Dark
-                <svg class="bi ms-auto d-none" aria-hidden="true">
-                    <use href="#check2"></use>
-                </svg>
-            </button>
-        </li>
-        <li>
-            <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center active"
-                    data-bs-theme-value="auto"
-                    aria-pressed="true"
-            >
-                <svg class="bi me-2 opacity-50" aria-hidden="true">
-                    <use href="#circle-half"></use>
-                </svg>
-                Auto
-                <svg class="bi ms-auto d-none" aria-hidden="true">
-                    <use href="#check2"></use>
-                </svg>
-            </button>
-        </li>
-    </ul>
-</div>
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
     <symbol id="bootstrap" viewBox="0 0 118 94">
         <title>Bootstrap</title>
@@ -358,6 +321,33 @@
             </li>
         </ul>
         <hr />
+        <div class="dropdown mb-3">
+            <button class="btn btn-link nav-link dropdown-toggle d-flex align-items-center text-white"
+                    id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown">
+                <svg class="bi me-2 opacity-50 theme-icon-active" width="16" height="16"><use href="#circle-half"></use></svg>
+                <span id="bd-theme-text">Theme</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow" aria-labelledby="bd-theme-text">
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+                        <svg class="bi me-2 opacity-50" width="16" height="16"><use href="#sun-fill"></use></svg>
+                        Light
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+                        <svg class="bi me-2 opacity-50" width="16" height="16"><use href="#moon-stars-fill"></use></svg>
+                        Dark
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
+                        <svg class="bi me-2 opacity-50" width="16" height="16"><use href="#circle-half"></use></svg>
+                        Auto
+                    </button>
+                </li>
+            </ul>
+        </div>
         <div class="dropdown">
             <a
                     href="#"
@@ -410,13 +400,12 @@
             </div>
         </div>
     </div>
-
-
-    <script src="view-assignments.js" defer></script>
-<!--    <div class="add-assignment-btn">-->
-<!--        <button style="font-size: 24px;" id="addAssignmentBtn">Add Assignment</button>-->
-<!--    </div>-->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="init-supabase.js"></script>
+
+    <script src="streak.js"></script>
+    <script src="view-assignments.js"></script>
 
 
     <script>
@@ -436,9 +425,47 @@
 
 </main>
 <script
-        src="../assets/dist/js/bootstrap.bundle.min.js"
+        src="assets/dist/js/bootstrap.bundle.min.js"
         class="astro-vvvwv3sm"
 ></script>
 <script src="sidebars.js" class="astro-vvvwv3sm"></script>
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Assignment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="modalDescription" class="form-label fw-bold">Notes / Description</label>
+                    <textarea class="form-control" id="modalDescription" rows="5" placeholder="Add details about this task..."></textarea>
+                </div>
+            </div>
+
+            <div class="mb-3 px-3">
+                <label class="form-label fw-bold">Post-it Color</label>
+                <div class="d-flex flex-wrap gap-3 justify-content-center" id="modalColorPalette">
+                    <input type="hidden" id="modalSelectedColor">
+
+                    <div class="color-swatch" style="background-color: #fffd91;" data-color="#fffd91"></div>
+                    <div class="color-swatch" style="background-color: #ffc107;" data-color="#ffc107"></div>
+                    <div class="color-swatch" style="background-color: #ff9191;" data-color="#ff9191"></div>
+                    <div class="color-swatch" style="background-color: #ff91f7;" data-color="#ff91f7"></div>
+                    <div class="color-swatch" style="background-color: #b991ff;" data-color="#b991ff"></div>
+                    <div class="color-swatch" style="background-color: #91c9ff;" data-color="#91c9ff"></div>
+                    <div class="color-swatch" style="background-color: #91ffda;" data-color="#91ffda"></div>
+                    <div class="color-swatch" style="background-color: #b7ff91;" data-color="#b7ff91"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveDescriptionBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+</div>
 </body>
 </html>

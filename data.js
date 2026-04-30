@@ -1,13 +1,8 @@
-//import { createClient} from 'npm:@supabase/supabase-js@2'
-//initialize supabase
-const{createClient} = window.supabase;
-const supabaseURL = "https://pjenzaldwxejuyyeppyp.supabase.co"
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqZW56YWxkd3hlanV5eWVwcHlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MTAwODgsImV4cCI6MjA4NDQ4NjA4OH0.MKWunjeuxDrVor09ImwL-QsCXfkErCwKO_4JHybJpUU";
-supabase = createClient(supabaseURL, supabaseAnonKey);
 //fetch and display user data
 const profileDataDiv = document.getElementById("profile-data");
 const name = document.getElementById("username");
 let session = null;
+
 
 
 //get the current open session from supabase
@@ -50,9 +45,10 @@ async function fetchProfile(){
     console.log('Unique user ID: ', userId);
     const {data: userProfile, error} = await supabase
         .from('PlannrInfo')
-        .select('first_name, last_name, city, email, streak')
+        .select('first_name, last_name, email, streak')
         .eq('id', userId)
         .maybeSingle();
+    if (!profileDataDiv) return;
     if(userProfile){
         profileDataDiv.innerHTML = `<p><strong> Hello, </strong> ${userProfile.first_name ?? ''}</p>` +
             `<p><strong> Email:</strong> ${userProfile.email ?? ''}</p>`;
@@ -69,6 +65,7 @@ fetchProfile().catch((error) =>{
 
 async function loadDashboardNotifications() {
     const alertContainer = document.getElementById("urgent-alerts");
+    if (!alertContainer) return;
 
     // 1. Get current user
     const { data: { user } } = await supabase.auth.getUser();
@@ -123,6 +120,7 @@ loadDashboardNotifications();
 
 async function getUpcomingAlerts() {
     const alertBox = document.getElementById("urgent-alerts");
+    if (!alertBox) return;
     const { data: { user } } = await supabase.auth.getUser();
 
     // Fetch only incomplete tasks

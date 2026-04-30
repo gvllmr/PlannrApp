@@ -105,6 +105,25 @@
         .flex-grow-1 {
             min-height: 100vh;
         }
+        .color-swatch {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.15);
+        }
+
+        .color-swatch.active {
+            border-color: #25bff1; /* Matches your theme color */
+            transform: scale(1.1);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px #25bff1;
+        }
     </style>
 </head>
 <body>
@@ -133,76 +152,6 @@
         ></path>
     </symbol>
 </svg>
-<div
-        class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle"
->
-    <button
-            class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
-            id="bd-theme"
-            type="button"
-            aria-expanded="false"
-            data-bs-toggle="dropdown"
-            aria-label="Toggle theme (auto)"
-    >
-        <svg class="bi my-1 theme-icon-active" aria-hidden="true">
-            <use href="#circle-half"></use>
-        </svg>
-        <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
-    </button>
-    <ul
-            class="dropdown-menu dropdown-menu-end shadow"
-            aria-labelledby="bd-theme-text"
-    >
-        <li>
-            <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center"
-                    data-bs-theme-value="light"
-                    aria-pressed="false"
-            >
-                <svg class="bi me-2 opacity-50" aria-hidden="true">
-                    <use href="#sun-fill"></use>
-                </svg>
-                Light
-                <svg class="bi ms-auto d-none" aria-hidden="true">
-                    <use href="#check2"></use>
-                </svg>
-            </button>
-        </li>
-        <li>
-            <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center"
-                    data-bs-theme-value="dark"
-                    aria-pressed="false"
-            >
-                <svg class="bi me-2 opacity-50" aria-hidden="true">
-                    <use href="#moon-stars-fill"></use>
-                </svg>
-                Dark
-                <svg class="bi ms-auto d-none" aria-hidden="true">
-                    <use href="#check2"></use>
-                </svg>
-            </button>
-        </li>
-        <li>
-            <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center active"
-                    data-bs-theme-value="auto"
-                    aria-pressed="true"
-            >
-                <svg class="bi me-2 opacity-50" aria-hidden="true">
-                    <use href="#circle-half"></use>
-                </svg>
-                Auto
-                <svg class="bi ms-auto d-none" aria-hidden="true">
-                    <use href="#check2"></use>
-                </svg>
-            </button>
-        </li>
-    </ul>
-</div>
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
     <symbol id="bootstrap" viewBox="0 0 118 94">
         <title>Bootstrap</title>
@@ -360,6 +309,11 @@
                         <label for="subject">Subject (e.g., Math, History)</label>
                     </div>
 
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" id="description" placeholder="Notes" style="height: 100px"></textarea>
+                        <label for="description">Description / Notes</label>
+                    </div>
+
                     <div class="mb-3">
                         <label for="taskType" class="form-label small fw-bold text-muted">Task Type</label>
                         <select id="taskType" class="form-select">
@@ -374,6 +328,22 @@
                     <div class="mb-4">
                         <label for="dueDate" class="form-label small fw-bold text-muted">Due Date</label>
                         <input type="date" class="form-control" id="dueDate" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">Post-it Color</label>
+                        <div class="d-flex flex-wrap gap-2" id="colorPalette">
+                            <input type="hidden" id="selectedColor" value="#fffd91">
+
+                            <div class="color-swatch active" style="background-color: #fffd91;" data-color="#fffd91"></div>
+                            <div class="color-swatch" style="background-color: #ffc107;" data-color="#ffc107"></div>
+                            <div class="color-swatch" style="background-color: #ff9191;" data-color="#ff9191"></div>
+                            <div class="color-swatch" style="background-color: #ff91f7;" data-color="#ff91f7"></div>
+                            <div class="color-swatch" style="background-color: #b991ff;" data-color="#b991ff"></div>
+                            <div class="color-swatch" style="background-color: #91c9ff;" data-color="#91c9ff"></div>
+                            <div class="color-swatch" style="background-color: #91ffda;" data-color="#91ffda"></div>
+                            <div class="color-swatch" style="background-color: #b7ff91;" data-color="#b7ff91"></div>
+                        </div>
                     </div>
 
                     <div class="d-grid gap-2">
@@ -393,7 +363,7 @@
 
 </main>
 <script
-        src="../assets/dist/js/bootstrap.bundle.min.js"
+        src="assets/dist/js/bootstrap.bundle.min.js"
         class="astro-vvvwv3sm"
 ></script>
 <script src="sidebars.js" class="astro-vvvwv3sm"></script>

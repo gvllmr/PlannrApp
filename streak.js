@@ -1,105 +1,136 @@
 // Ensure your 'supabase' client is initialized before this script runs
-let streak = 0;
-let lastUpdate = null;
+const StreakManager = {
+    // We don't define streakCountEl at the top anymore.
+    // We fetch it inside the functions to ensure the DOM is ready.
 
-const streakCountEl = document.getElementById('streak-count');
-const button = document.getElementById('complete-task-btn');
+    async handleTaskCompletion(userId) {
+        console.log("Step 1: Function triggered for ID:", userId);
+        const today = new Date().toLocaleDateString('en-CA');
 
-async function syncStreak() {
-    try {
-        // 1. Get the current logged-in user
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        try {
+            // 1. Fetch current data
+            const { data: info, error: fetchError } = await supabase
+                .from('PlannrInfo')
+                .select('streak, last_update')
+                .eq('id', userId)
+                .maybeSingle();
 
-        if (authError || !user) {
-            console.error("User not logged in:", authError);
-            return;
+            if (fetchError) throw fetchError;
+            console.log("Step 2: Current DB Data:", info);
+
+            let currentStreak = info?.streak || 0;
+            let lastUpdate = info?.last_update || null;
+
+            // 2. Logic Check
+            if (lastUpdate === today) {
+                console.log("Step 3: User already completed a task today. No increase needed.");
+                return;
+            }
+
+            currentStreak++;
+            console.log("Step 3: New calculated streak:", currentStreak);
+
+            // 3. The Save Operation
+            const { error: upsertError } = await supabase
+                .from('PlannrInfo')
+                .upsert({
+                    id: userId,
+                    streak: currentStreak,
+                    last_update: today
+                }, { onConflict: 'id' }); // Explicitly tell Supabase to match on 'id'
+
+            if (upsertError) throw upsertError;
+
+            console.log("Step 4: Save successful!");
+            this.updateUI(currentStreak, today);
+
+        } catch (err) {
+            console.error("STREAK FAILURE:", err.message);
+            alert("Database Error: " + err.message); // This will pop up if Supabase rejects the save
         }
+    },
 
-        // 2. Fetch data from your specific table
-        const { data, error } = await supabase
+    async checkForReset(userId) {
+        const { data: info } = await supabase
+            .from('PlannrInfo')
+            .select('last_update, streak')
+            .eq('id', userId)
+            .maybeSingle();
+
+        if (!info?.last_update || info.streak === 0) return;
+
+        const lastDate = new Date(info.last_update + 'T00:00:00'); // Ensure local time parsing
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        lastDate.setHours(0, 0, 0, 0);
+
+        const diffTime = today - lastDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+        // If more than 1 day has passed, reset
+        if (diffDays > 1) {
+            await supabase
+                .from('PlannrInfo')
+                .update({ streak: 0 })
+                .eq('id', userId);
+            return true; // Indicates a reset happened
+        }
+        return false;
+    },
+
+    updateUI(streak, lastUpdate) {
+        // Fetching elements locally so they are never null when the function runs
+        const streakCountEl = document.getElementById('streak-count');
+        const streakStatusEl = document.getElementById('streak-status');
+        const streakDisplay = document.getElementById('streak-display');
+        const today = new Date().toLocaleDateString('en-CA');
+
+        if (streakCountEl) streakCountEl.textContent = streak ?? 0;
+
+        if (streakStatusEl) {
+            if (lastUpdate === today) {
+                streakStatusEl.textContent = "Today's goal met!";
+                streakStatusEl.className = "text-success small fw-bold";
+                if (streakDisplay) streakDisplay.style.opacity = "1";
+            } else {
+                streakStatusEl.textContent = "Complete a task to keep your streak!";
+                streakStatusEl.className = "text-warning small fw-bold";
+                if (streakDisplay) streakDisplay.style.opacity = "0.5";
+            }
+        }
+    },
+
+    async init() {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // 1. Check for resets
+        await this.checkForReset(user.id);
+
+        // 2. Fetch fresh data
+        const { data: info } = await supabase
             .from('PlannrInfo')
             .select('streak, last_update')
-            .eq('id', user.id) // Assuming 'id' is your Primary Key linked to Auth
-            .single();
+            .eq('id', user.id)
+            .maybeSingle();
 
-        if (error) {
-            console.error("Error fetching PlannrInfo:", error.message);
-            return;
+        // 3. Sync UI
+        if (info) {
+            this.updateUI(info.streak, info.last_update);
         }
 
-        if (data) {
-            streak = data.streak || 0;
-            lastUpdate = data.last_update;
-
-            // Check if they missed a day
-            await checkStreakReset(user.id);
-            updateUI();
+        // 4. Attach event listener to the button if it exists on THIS page
+        const btn = document.getElementById('complete-task-btn');
+        if (btn) {
+            // Use an arrow function so 'this' still refers to StreakManager
+            btn.onclick = () => this.handleTaskCompletion(user.id);
         }
-    } catch (err) {
-        console.error("Unexpected error in syncStreak:", err);
     }
+};
+
+// Start the manager ONLY when the DOM is fully loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => StreakManager.init());
+} else {
+    StreakManager.init();
 }
-
-async function checkStreakReset(userId) {
-    if (!lastUpdate) return;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // Safety check for date format
-    const lastDate = new Date(lastUpdate + 'T00:00:00');
-    lastDate.setHours(0, 0, 0, 0);
-
-    const diffDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
-
-    if (diffDays >= 2) {
-        streak = 0;
-        const { error } = await supabase
-            .from('PlannrInfo')
-            .update({ streak: 0 })
-            .eq('id', userId);
-
-        if (!error) alert("Streak reset to 0! You missed a day.");
-    }
-}
-
-button.addEventListener('click', async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return alert("Please sign in first!");
-
-    const todayStr = new Date().toISOString().split('T')[0];
-
-    if (lastUpdate === todayStr) {
-        alert("You've already studied today! Come back tomorrow to increase your streak.");
-        return;
-    }
-
-    streak++;
-    lastUpdate = todayStr;
-
-    // Update Supabase
-    const { error } = await supabase
-        .from('PlannrInfo')
-        .update({
-            streak: streak,
-            last_update: lastUpdate
-        })
-        .eq('id', user.id);
-
-    if (error) {
-        console.error("Update failed:", error.message);
-        alert("Could not save streak. Check console.");
-    } else {
-        updateUI();
-        alert("Great job! Streak updated.");
-    }
-    if (!error) {
-        getUpcomingAlerts(); // Refresh alerts to remove the task they just finished!
-    }
-});
-
-function updateUI() {
-    if (streakCountEl) streakCountEl.textContent = streak;
-}
-
-syncStreak();

@@ -1,16 +1,14 @@
 //initalize Supabase
-const{createClient} = window.supabase;
-const supabaseURL = "https://pjenzaldwxejuyyeppyp.supabase.co"
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqZW56YWxkd3hlanV5eWVwcHlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MTAwODgsImV4cCI6MjA4NDQ4NjA4OH0.MKWunjeuxDrVor09ImwL-QsCXfkErCwKO_4JHybJpUU";
-supabase = createClient(supabaseURL, supabaseKey);
-console.log("I made it here")
-
+console.log("Checking StreakManager availability:", typeof StreakManager);
 let allAssignments = [];
 
 
 
 async function fetchAssignments() {
     const container = document.getElementById("container");
+
+    if (!container) return;
+
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -30,6 +28,11 @@ async function fetchAssignments() {
         return;
     }
 
+    if (user) {
+        // Check for missed assignments from yesterday to reset streak
+        StreakManager.checkForReset(user.id);
+    }
+
     // FIX 1: Use 'data' (the variable from Supabase) instead of 'assignments'
     allAssignments = data;
 
@@ -42,54 +45,6 @@ async function fetchAssignments() {
     renderAssignments(allAssignments);
 }
 
-// FIX 2: Move renderAssignments OUTSIDE fetchAssignments so it's a clean helper
-/*function renderAssignments(assignmentsList) {
-    const container = document.getElementById("container");
-    container.innerHTML = "";
-
-    assignmentsList.forEach(task => {
-        const typeColors = {
-            'Test': '#ff4d4d',
-            'Quiz': '#ffa500',
-            'Homework': '#4da6ff',
-            'Project': '#9933ff',
-            'Other': '#808080'
-        };
-
-        const badgeColor = typeColors[task.type] || '#808080';
-        const div = document.createElement("div");
-
-        // Use 'is_completed' to match your database column name
-        div.className = `assignment-card ${task.completed ? 'completed' : ''}`;
-
-        // Note: 180px padding is very large; 20px is usually standard!
-        div.style.padding = "20px";
-        div.style.marginLeft = "180px";
-        div.style.marginBottom = "15px";
-        div.style.border = "1px solid #eee";
-
-        div.innerHTML = `
-            <h3>${task.title} <span class="badge" style="background-color: ${badgeColor}; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">${task.type}</span></h3>
-            <p><strong>Subject:</strong> ${task.subject}</p>
-            <p><strong>Due:</strong> ${task.due_date}</p>
-            <div class="card-actions">
-                ${!task.completed ? `<button class="complete-btn">Done</button>` : '<span>✅ Finished</span>'}
-                <button class="delete-btn">Delete</button>
-            </div>
-        `;
-
-        // Logic for buttons
-        const completeBtn = div.querySelector(".complete-btn");
-        if (completeBtn) {
-            completeBtn.onclick = () => toggleComplete(task.id, task.completed);
-        }
-
-        const deleteBtn = div.querySelector(".delete-btn");
-        deleteBtn.onclick = () => deleteAssignment(task.id, div);
-
-        container.appendChild(div);
-    });
-} */
 
 // FIX 3: Move Sort Listener outside so it only gets created ONCE
 document.getElementById("sortOrder")?.addEventListener("change", (e) => {
@@ -121,21 +76,21 @@ async function deleteAssignment(id, element) {
     }
 }
 
-async function toggleComplete(id, element) {
-    try {
-        const { data, error } = await supabase
-            .from('Assignments')
-            .update({ completed: true })
-            .eq('id', id); // Ensure the ID matches the row you want to change
+async function toggleTaskComplete(taskId, isCompleted) {
+    const { data: { user } } = await supabase.auth.getUser();
 
-        if (error) throw error;
+    // 1. Update the assignment status in Supabase
+    const { error } = await supabase
+        .from('Assignments')
+        .update({ completed: isCompleted })
+        .eq('id', taskId);
 
-        console.log("Assignment updated successfully:", data);
+    if (!error && isCompleted) {
+        // 2. TRIGGER THE STREAK HERE
+        // This is where the magic happens!
+        await StreakManager.handleTaskCompletion(user.id);
 
-        // Optional: Refresh your UI or remove the item from the 'pending' list
-        // location.reload();
-    } catch (error) {
-        console.error("Error updating assignment:", error.message);
+        console.log("Task completed and streak checked!");
     }
 }
 
@@ -156,73 +111,6 @@ async function undoComplete(taskId) {
 
 let undoTimeout;
 
-/*async function handleCompleteAction(taskId, taskElement, b) {
-    // 1. Visually hide the task immediately for a "snappy" feel
-    taskElement.style.opacity = "0.5";
-
-    // 2. Show the Toast
-    const toast = document.getElementById("undo-toast");
-    const undoBtn = document.getElementById("undo-action-btn");
-    toast.classList.remove("hidden");
-
-    // 3. Set a timer (5 seconds)
-    undoTimeout = setTimeout(async () => {
-        // This runs if the user DOES NOT click undo
-        await toggleComplete(taskId, true);
-        //taskElement.remove(); // Remove from the "Pending" list
-        toast.classList.add("hidden");
-    }, 5000);
-
-    // 4. Set up the Undo Button click
-    undoBtn.onclick = () => {
-        clearTimeout(undoTimeout); // Stop the database update
-        undoComplete(taskId)
-        taskElement.style.opacity = "1"; // Restore the task
-        toast.classList.add("hidden");   // Hide the toast
-        console.log("Action undone!");
-        undoTimeout = null; // Reset the tracker
-        // Restore the UI
-        taskElement.style.display = "block"; // Or "block", matching your CSS
-        toast.classList.add("hidden");
-        b.disabled = false
-        console.log("Undo successful - ready to click again.");
-    };
-}*/
-
-async function handleCompleteAction(taskId, taskElement, b) {
-    taskElement.classList.add("completed");
-    if (undoTimeout) clearTimeout(undoTimeout);
-
-    const toast = document.getElementById("undo-toast");
-    const undoBtn = document.getElementById("undo-action-btn");
-
-    // 1. "Soft" Complete: Gray it out visually
-
-    toast.classList.remove("hidden");
-
-    undoTimeout = setTimeout(async () => {
-        // 2. Finalize in Supabase
-        await toggleComplete(taskId, true);
-        toast.classList.add("hidden");
-        undoTimeout = null;
-        // Task stays on page because we don't call .remove()
-    }, 5000);
-
-    undoBtn.onclick = () => {
-        clearTimeout(undoTimeout); // Stop the database update
-        undoComplete(taskId);
-        taskElement.classList.remove("completed");
-        toast.classList.add("hidden");   // Hide the toast
-        console.log("Action undone!");
-        undoTimeout = null; // Reset the tracker
-        // Restore the UI
-        taskElement.style.display = "block"; // Or "block", matching your CSS
-        toast.classList.add("hidden");
-        b.disabled = false
-        console.log("Undo successful - ready to click again.");
-    };
-}
-
 // Run the function when the page loads
 fetchAssignments();
 
@@ -231,54 +119,170 @@ fetchAssignments();
 
 function renderAssignments(assignmentsList) {
     const container = document.getElementById("container");
+    if (!container) return;
     container.innerHTML = "";
 
     assignmentsList.forEach(task => {
         const div = document.createElement("div");
-
-        // 1. Create the class string
-        const typeClass = `type-${task.type}`;
-
-        // 2. Check the 'completed' column from your DB
         const isDoneClass = task.completed ? 'completed' : '';
+        div.className = `post-it ${isDoneClass}`;
 
-        div.className = `post-it ${typeClass} ${isDoneClass}`;
+        // Apply user-selected color
+        div.style.backgroundColor = task.color || "#fffd91";
+        div.style.color = "#000000";
 
         div.innerHTML = `
-            <div>
-                <h3>${task.title}</h3>
-                <p><strong>Subject:</strong> ${task.subject}</p>
-            </div>
-            <div>
-                <p class="due-date">📅 ${task.due_date}</p>
-                <div class="card-actions" style="margin-top: 10px; display: flex; gap: 5px;">
-                    ${!task.completed ? `<button class="complete-btn">Done</button>` : '<span>✅ Finished</span>'}
-                    <button class="delete-btn">🗑️</button>
-                </div>
-            </div>
-        `;
+    <div class="post-it-content">
+        <span class="type-badge badge-${task.type}">${task.type}</span>
+        
+        <h3 class="assignment-title" title="${task.title}">${task.title}</h3>
+        
+        
+        <p class="assignment-subject"><strong>Subject:</strong> ${task.subject}</p>
+        <button class="btn btn-sm btn-link p-0 text-decoration-none view-notes-btn" style="color: #555;">
+            📄 Edit Notes
+        </button>
+    </div>
+    <div class="post-it-footer">
+        <p class="due-date">📅 ${task.due_date}</p>
+        <div class="card-actions" style="margin-top: 15px; display: flex; gap: 10px; align-items: center;">
+    ${!task.completed
+            ? `<button class="complete-btn" data-id="${task.id}">
+             <svg width="16" height="16" style="fill: currentColor; margin-right: 5px;">
+                <use xlink:href="#check2"></use>
+             </svg>
+             Done
+           </button>`
+            : '<span class="status-badge">✅ Finished</span>'
+        }
+    <button class="delete-btn" data-id="${task.id}">🗑️</button>
+</div>
+    </div>
+`;
 
-        // Button logic
+        // VIEW/EDIT NOTES LOGIC
+        const viewNotesBtn = div.querySelector(".view-notes-btn");
+        viewNotesBtn.onclick = () => {
+            openDescriptionModal(task);
+        };
+
+        // ... rest of your existing button logic (completeBtn and deleteBtn) ...
         const completeBtn = div.querySelector(".complete-btn");
         if (completeBtn) {
             completeBtn.onclick = async () => {
-                // Update Supabase
-                const { error } = await supabase
-                    .from("Assignments")
-                    .update({ completed: true }) // Matches your column name
-                    .eq("id", task.id);
+                // 1. Disable the button immediately to prevent double-clicks
+                completeBtn.disabled = true;
+                completeBtn.innerText = "Saving...";
 
-                if (!error) {
-                    // Locally update the UI without a full refresh
-                    div.classList.add("completed");
-                    completeBtn.parentElement.innerHTML = "<span>✅ Finished</span>";
+                try {
+                    // 2. Call your existing Supabase logic (passing true for isCompleted)
+                    await toggleTaskComplete(task.id, true);
+
+                    // 3. Update the local task object so the UI stays in sync
+                    task.completed = true;
+
+                    // 4. Re-render the list to reflect the "✅ Finished" state
+                    // OR manually update the DOM for a smoother transition:
+                    div.classList.add('completed');
+                    const actionContainer = div.querySelector(".card-actions");
+                    actionContainer.innerHTML = `<span>✅ Finished</span><button class="delete-btn">🗑️</button>`;
+
+                    // Re-attach the delete logic to the new button since we replaced the innerHTML
+                    actionContainer.querySelector(".delete-btn").onclick = () => deleteAssignment(task.id, div);
+
+                } catch (err) {
+                    console.error("Failed to complete task:", err);
+                    alert("Something went wrong updating the task.");
+                    completeBtn.disabled = false;
+                    completeBtn.innerText = "Done";
                 }
             };
         }
-
         const deleteBtn = div.querySelector(".delete-btn");
         deleteBtn.onclick = () => deleteAssignment(task.id, div);
 
         container.appendChild(div);
     });
+}
+
+function openDescriptionModal(task) {
+    const modalTitle = document.getElementById("modalTitle");
+    modalTitle.innerText = task.title;
+    const modal = new bootstrap.Modal(document.getElementById('descriptionModal'));
+    const titleEl = document.getElementById('modalTitle');
+    const descInput = document.getElementById('modalDescription');
+    const colorInput = document.getElementById('modalSelectedColor');
+    const saveBtn = document.getElementById('saveDescriptionBtn');
+    const swatches = document.querySelectorAll('#modalColorPalette .color-swatch');
+
+    // 1. Populate existing data
+    titleEl.innerText = `Details: ${task.title}`;
+    descInput.value = task.description || "";
+    colorInput.value = task.color || "#fffd91";
+
+    // 2. Highlight the currently saved color in the palette
+    swatches.forEach(s => {
+        s.classList.remove('active');
+        if (s.getAttribute('data-color') === colorInput.value) {
+                s.classList.add('active');
+        }
+
+        // Add click listener for swatches inside the modal
+        s.onclick = function() {
+            swatches.forEach(sw => sw.classList.remove('active'));
+            this.classList.add('active');
+            colorInput.value = this.getAttribute('data-color');
+        };
+    });
+
+    // 3. Handle Save
+    saveBtn.onclick = async () => {
+        const newDescription = descInput.value;
+        const newColor = colorInput.value;
+
+        const { error } = await supabase
+            .from("Assignments")
+            .update({
+                description: newDescription,
+                color: newColor
+            })
+            .eq("id", task.id);
+
+        if (error) {
+            alert("Error saving changes: " + error.message);
+        } else {
+            // Update local data in the master list
+            task.description = newDescription;
+            task.color = newColor;
+
+            // --- NEW LOGIC TO PRESERVE SORT ---
+            const sortDropdown = document.getElementById("sortOrder");
+            const currentSort = sortDropdown ? sortDropdown.value : "due_date";
+
+            const sortedList = [...allAssignments].sort((a, b) => {
+                const valA = (a[currentSort] || "").toString().toLowerCase();
+                const valB = (b[currentSort] || "").toString().toLowerCase();
+                return valA < valB ? -1 : (valA > valB ? 1 : 0);
+            });
+
+            // Render the sorted list instead of the raw allAssignments
+            renderAssignments(sortedList);
+            // ----------------------------------
+
+            modal.hide();
+            console.log("Assignment updated and sort preserved!");
+        }
+    };
+
+    modal.show();
+}
+
+function applyCurrentSortAndRender() {
+    const sortBy = document.getElementById("sortOrder")?.value || "due_date";
+    const sortedList = [...allAssignments].sort((a, b) => {
+        const valA = (a[sortBy] || "").toString().toLowerCase();
+        const valB = (b[sortBy] || "").toString().toLowerCase();
+        return valA < valB ? -1 : (valA > valB ? 1 : 0);
+    });
+    renderAssignments(sortedList);
 }

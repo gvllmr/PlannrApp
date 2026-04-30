@@ -1,0 +1,16 @@
+/* Custom divider adjustment for dark mode */
+[data-bs-theme="dark"] .b-example-divider {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Ensure fire text pops on dark backgrounds */
+[data-bs-theme="dark"] .fire-text {
+    background: linear-gradient(to top, #ff6e31, #ffc107);
+    -webkit-background-clip: text;
+}
+
+/* Adjust carousel images for dark mode if they are too bright */
+[data-bs-theme="dark"] .carousel-item img {
+    filter: brightness(0.6) grayscale(0.2);
+}

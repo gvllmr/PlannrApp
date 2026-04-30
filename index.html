@@ -14,10 +14,12 @@
           rel="canonical"
           href="https://getbootstrap.com/docs/5.3/examples/carousel/"
   />
-  <script src="../assets/js/color-modes.js"></script>
-  <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="assets/js/color-modes.js"></script>
+  <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet" />
   <meta name="theme-color" content="#712cf9" />
   <link href="carousel.css" rel="stylesheet" />
+  <link href="darkmode.css" rel="stylesheet" />
+
   <style>
     .bd-placeholder-img {
       font-size: 1.125rem;
@@ -150,78 +152,8 @@
     ></path>
   </symbol>
 </svg>
-<div
-        class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle"
->
-  <button
-          class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
-          id="bd-theme"
-          type="button"
-          aria-expanded="false"
-          data-bs-toggle="dropdown"
-          aria-label="Toggle theme (auto)"
-  >
-    <svg class="bi my-1 theme-icon-active" aria-hidden="true">
-      <use href="#circle-half"></use>
-    </svg>
-    <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
-  </button>
-  <ul
-          class="dropdown-menu dropdown-menu-end shadow"
-          aria-labelledby="bd-theme-text"
-  >
-    <li>
-      <button
-              type="button"
-              class="dropdown-item d-flex align-items-center"
-              data-bs-theme-value="light"
-              aria-pressed="false"
-      >
-        <svg class="bi me-2 opacity-50" aria-hidden="true">
-          <use href="#sun-fill"></use>
-        </svg>
-        Light
-        <svg class="bi ms-auto d-none" aria-hidden="true">
-          <use href="#check2"></use>
-        </svg>
-      </button>
-    </li>
-    <li>
-      <button
-              type="button"
-              class="dropdown-item d-flex align-items-center"
-              data-bs-theme-value="dark"
-              aria-pressed="false"
-      >
-        <svg class="bi me-2 opacity-50" aria-hidden="true">
-          <use href="#moon-stars-fill"></use>
-        </svg>
-        Dark
-        <svg class="bi ms-auto d-none" aria-hidden="true">
-          <use href="#check2"></use>
-        </svg>
-      </button>
-    </li>
-    <li>
-      <button
-              type="button"
-              class="dropdown-item d-flex align-items-center active"
-              data-bs-theme-value="auto"
-              aria-pressed="true"
-      >
-        <svg class="bi me-2 opacity-50" aria-hidden="true">
-          <use href="#circle-half"></use>
-        </svg>
-        Auto
-        <svg class="bi ms-auto d-none" aria-hidden="true">
-          <use href="#check2"></use>
-        </svg>
-      </button>
-    </li>
-  </ul>
-</div>
 <header data-bs-theme="dark">
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <nav class="navbar navbar-expand-md fixed-top bg-body-tertiary border-bottom">
     <div class="container-fluid">
       <img src="plannrlogonotext.png" alt="Logo" width="40" height="40" class="me-2">
       <a class="navbar-brand" href="#">Plannr</a>
@@ -239,12 +171,38 @@
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link active" href="#">Home</a>
           </li>
-          <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link disabled" aria-disabled="true">Disabled</a>-->
-<!--          </li>-->
+          <li class="nav-item">
+            <a class="nav-link" href="login.html">Login</a>
+          </li>
+          <li class="nav-item dropdown">
+            <button class="btn btn-link nav-link dropdown-toggle d-flex align-items-center"
+                    id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static">
+              <svg class="bi my-1 theme-icon-active" width="16" height="16"><use href="#circle-half"></use></svg>
+              <span class="d-lg-none ms-2" id="bd-theme-text">Toggle theme</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme-text">
+              <li>
+                <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+                  <svg class="bi me-2 opacity-50" width="16" height="16"><use href="#sun-fill"></use></svg>
+                  Light
+                </button>
+              </li>
+              <li>
+                <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+                  <svg class="bi me-2 opacity-50" width="16" height="16"><use href="#moon-stars-fill"></use></svg>
+                  Dark
+                </button>
+              </li>
+              <li>
+                <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
+                  <svg class="bi me-2 opacity-50" width="16" height="16"><use href="#circle-half"></use></svg>
+                  Auto
+                </button>
+              </li>
+            </ul>
+          </li>
         </ul>
 <!--        <form class="d-flex" role="search">-->
 <!--          <input-->
@@ -299,13 +257,13 @@
         ></rect>
         </img>
         <div class="container">
-          <div class="carousel-caption text-start">
+          <div class="carousel-caption text-start text-white">
             <h1>Plan Like a Pro.</h1>
             <p class="opacity-75">
               Study Like a Machine.
             </p>
             <p>
-              <a class="btn btn-lg btn-primary" href="signup.html">Sign up today</a>
+              <a class="btn btn-lg btn-outline-light" href="signup.html">Sign up today</a>
             </p>
           </div>
         </div>
@@ -323,7 +281,7 @@
           ></rect>
         </img>
         <div class="container">
-          <div class="carousel-caption">
+          <div class="carousel-caption text-white">
             <h1>The Ultimate Student Dashboard</h1>
             <p>
               Your Semester, Visualized.
@@ -344,7 +302,7 @@
         ></rect>
         </img>
         <div class="container">
-          <div class="carousel-caption text-end">
+          <div class="carousel-caption text-end text-white">
             <h1>Clear the Clutter.</h1>
             <p>
               Master the Deadline.
@@ -532,8 +490,44 @@
   </footer>
 </main>
 <script
-        src="../assets/dist/js/bootstrap.bundle.min.js"
+        src="assets/dist/js/bootstrap.bundle.min.js"
         class="astro-vvvwv3sm"
 ></script>
+
+<script>
+  (() => {
+    'use strict'
+    const getStoredTheme = () => localStorage.getItem('theme')
+    const setStoredTheme = theme => localStorage.setItem('theme', theme)
+
+    const getPreferredTheme = () => {
+      const storedTheme = getStoredTheme()
+      if (storedTheme) return storedTheme
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+
+    const setTheme = theme => {
+      if (theme === 'auto') {
+        document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
+      } else {
+        document.documentElement.setAttribute('data-bs-theme', theme)
+      }
+    }
+
+    setTheme(getPreferredTheme())
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('[data-bs-theme-value]')
+              .forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                  const theme = toggle.getAttribute('data-bs-theme-value')
+                  setStoredTheme(theme)
+                  setTheme(theme)
+                })
+              })
+    })
+  })()
+</script>
+
 </body>
 </html>
