@@ -84,7 +84,7 @@ updateBtn?.addEventListener("click", async() => {
     console.log("Unique user ID: ", userID);
 
     const {updateError} = await supabase.from("PlannrInfo").update([{
-            first_name: newFirstName, last_name: newLastName, city: newCity
+            first_name: newFirstName, last_name: newLastName
         }]).eq('id', userID)
     ;
 
