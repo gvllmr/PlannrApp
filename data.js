@@ -145,11 +145,14 @@ async function getUpcomingAlerts() {
     }
 
     alertBox.innerHTML = dueSoon.map(task => `
-        <div class="alert alert-warning py-2 mb-2 d-flex justify-content-between align-items-center">
-            <span><strong>${task.type}:</strong> ${task.title}</span>
-            <span class="badge bg-dark">${task.due_date}</span>
+    <div class="alert alert-warning py-2 mb-2 d-flex justify-content-between align-items-center gap-3">
+        <div style="min-width: 0; flex-grow: 1;">
+            <strong>${task.type}:</strong> 
+            <span class="notification-title" title="${task.title}">${task.title}</span>
         </div>
-    `).join('');
+        <span class="badge bg-dark flex-shrink-0">${task.due_date}</span>
+    </div>
+`).join('');
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

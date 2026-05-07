@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Display Data</title>
+    <title>Home</title>
     <link
             rel="canonical"
             href="https://getbootstrap.com/docs/5.3/examples/sidebars/"
@@ -139,6 +139,19 @@
         /* Keep the sidebar dark even in light mode (optional, based on your current class text-bg-dark) */
         .text-bg-dark {
             background-color: #212529 !important;
+        }
+        .notification-title {
+            display: inline-block;
+            vertical-align: bottom;
+            white-space: nowrap;      /* Force one line */
+            overflow: hidden;         /* Hide the 'aaaaa' overflow */
+            text-overflow: ellipsis;  /* Add the '...' */
+            max-width: 100%;          /* Don't let it push the container wider */
+        }
+
+        /* Optional: Make the alert container feel more compact */
+        .alert {
+            overflow: hidden;
         }
     </style>
 </head>

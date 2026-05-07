@@ -103,7 +103,13 @@
 
         /* Ensure the main container takes up full remaining width next to sidebar */
         .flex-grow-1 {
-            min-height: 100vh;
+            /*min-height: 100vh;*/
+            display: flex;
+            justify-content: center;
+            align-items: start; /* Changed from center */
+            padding-top: 50px;
+            padding-bottom: 50px;
+            min-height: 100%;
         }
         .color-swatch {
             width: 35px;
@@ -123,6 +129,9 @@
             border-color: #25bff1; /* Matches your theme color */
             transform: scale(1.1);
             box-shadow: 0 0 0 2px white, 0 0 0 4px #25bff1;
+        }
+        #description {
+            resize: vertical;
         }
     </style>
 </head>
@@ -197,7 +206,7 @@
         <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
     </symbol>
 </svg>
-<main class="d-flex flex-nowrap">
+<main class="d-flex flex-nowrap vh-100 overflow-hidden">
     <h1 class="visually-hidden">Sidebars examples</h1>
     <div
             class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark h-100"
@@ -290,8 +299,8 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="flex-grow-1 p-5 d-flex justify-content-center align-items-center bg-body-tertiary">
+    <div class="container-fluid h-100 overflow-auto bg-body-tertiary">
+        <div class="flex-grow-1 p-5 d-flex justify-content-center align-items-start">
             <div class="card shadow-lg border-0" style="max-width: 500px; width: 100%; border-radius: 15px;">
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
@@ -306,6 +315,7 @@
 
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="subject" placeholder="Subject" required>
+                        <small id="charCount">0/24</small>
                         <label for="subject">Subject (e.g., Math, History)</label>
                     </div>
 
@@ -358,7 +368,18 @@
             </div>
         </div>
     </div>
+    <script>
+        const subjectInput = document.getElementById('subject');
+        const charCount = document.getElementById('charCount');
 
+        subjectInput.addEventListener('input', () => {
+            const length = subjectInput.value.length;
+            charCount.textContent = `${length}/24`;
+
+            // Optional: Turn text red if it hits the limit
+            charCount.style.color = length >= 24 ? "red" : "inherit";
+        });
+    </script>
 
 
 </main>

@@ -24,43 +24,65 @@ loginBtn?.addEventListener("click", async(e) => {
 const signupBtn = document.getElementById("signupBtn");
 signupBtn?.addEventListener("click", async (d) => {
     d.preventDefault();
+    const errorDisplay = document.getElementById("error-msg");
 
-    const email = document.getElementById("floatingInput").value;
+    const email = document.getElementById("floatingInput").value.trim();
     const password = document.getElementById("floatingPassword").value;
-    const firstName = document.getElementById("floatingFirstName").value;
-    const lastName = document.getElementById("floatingLastName").value;
+    const firstName = document.getElementById("floatingFirstName").value.trim();
+    const lastName = document.getElementById("floatingLastName").value.trim();
 
-    // 1. Attempt the Auth Signup
-    // Note: destructuring { data, error } is the standard Supabase V2 syntax
+    // --- VALIDATION START ---
+    if (!email || !password || !firstName || !lastName) {
+        errorDisplay.textContent = "All fields are required.";
+        return;
+    }
+
+    // Basic Email Regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        errorDisplay.textContent = "Please enter a valid email address.";
+        return;
+    }
+
+    if (password.length < 6) {
+        errorDisplay.textContent = "Password must be at least 6 characters long.";
+        return;
+    }
+
+    if (firstName.length > 50 || lastName.length > 50) {
+        errorDisplay.textContent = "Names must be under 50 characters.";
+        return;
+    }
+    // --- VALIDATION END ---
+
+    errorDisplay.textContent = ""; // Clear errors
+
     const { data, error: signupError } = await supabase.auth.signUp({
         email,
         password,
     });
 
     if (signupError) {
-        document.getElementById("error-msg").textContent = signupError.message;
-        return; // Stop execution if auth fails
-    }
-
-    /* 2. Check if user was actually created.
-       If email confirmation is on, 'user' exists but 'identities' might be empty
-       if the email is a duplicate.
-    */
-    if (data.user && data.user.identities && data.user.identities.length === 0) {
-        document.getElementById("error-msg").textContent = "Email already registered. Please log in.";
+        errorDisplay.textContent = signupError.message;
         return;
     }
 
-    // 3. Proceed to insert into your custom table
-    const { error: insertError } = await supabase.from("PlannrInfo").insert([{
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+        errorDisplay.textContent = "Email already registered. Please log in.";
+        return;
+    }
+
+    // Use an object {}, not an array [{}], for single inserts/updates
+    const { error: insertError } = await supabase.from("PlannrInfo").insert({
+        id: data.user.id, // Good practice: ensure the ID matches the Auth ID
         first_name: firstName,
         last_name: lastName,
         email: email,
         streak: 0
-    }]);
+    });
 
     if (insertError) {
-        document.getElementById("error-msg").textContent = insertError.message;
+        errorDisplay.textContent = insertError.message;
     } else {
         window.location.href = 'display.html';
     }
@@ -69,11 +91,29 @@ signupBtn?.addEventListener("click", async (d) => {
 
 const updateBtn = document.getElementById("updateBtn");
 updateBtn?.addEventListener("click", async() => {
+    const newFirstName = document.getElementById("newFirstName").value.trim();
+    const newLastName = document.getElementById("newLastName").value.trim();
+    const errorDisplay = document.getElementById("error-msg");
+
+    // --- VALIDATION START ---
+    // 1. Check if empty
+    if (!newFirstName || !newLastName) {
+        errorDisplay.textContent = "Both fields are required.";
+        return;
+    }
+
+    // 2. Check for length (e.g., max 50 characters)
+    const maxLength = 50;
+    if (newFirstName.length > maxLength || newLastName.length > maxLength) {
+        errorDisplay.textContent = `Names cannot exceed ${maxLength} characters.`;
+        return;
+    }
+    // --- VALIDATION END ---
+
+    // If validation passes, proceed with the UI update and Supabase call
     updateBtn.disabled = true;
     updateBtn.innerText = "Updating...";
-
-    const newFirstName = document.getElementById("newFirstName").value;
-    const newLastName = document.getElementById("newLastName").value;
+    errorDisplay.textContent = ""; // Clear previous errors
 
     const {data: userData, error: userErr} = await supabase.auth.getUser();
     if(userErr || !userData?.user){

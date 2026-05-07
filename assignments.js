@@ -7,50 +7,56 @@
 
     const insertAssignmentBtn = document.getElementById("insertAssignmentBtn");
 
-    insertAssignmentBtn?.addEventListener("click", async () => {
-        // 1. Disable the button and optionally change the text
+    insertAssignmentBtn?.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        // 1. Grab values and trim whitespace
+        const title = document.getElementById("title").value.trim();
+        const subject = document.getElementById("subject").value.trim();
+        const description = document.getElementById('description').value.trim();
+        const dueDate = document.getElementById("dueDate").value;
+
+        // --- VALIDATION START ---
+        // Check if fields are empty
+        if (!title || !subject || !dueDate) {
+            alert("Please fill in the title, subject, and due date.");
+            return;
+        }
+
+        // Check subject length
+        if (subject.length > 24) {
+            alert("Subject must be 24 characters or less.");
+            return;
+        }
+        // --- VALIDATION END ---
+
         insertAssignmentBtn.disabled = true;
-        const originalText = insertAssignmentBtn.innerText;
         insertAssignmentBtn.innerText = "Saving...";
 
-        const title = document.getElementById("title").value;
-        const subject = document.getElementById("subject").value;
-        const description = document.getElementById('description').value;
-        const dueDate = document.getElementById("dueDate").value;
-        const selectedColor = document.getElementById('selectedColor').value;
-        const taskType = document.getElementById("taskType").value;
-
         try {
-            const { data: userData } = await supabase.auth.getUser();
-            const userID = userData.user.id;
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("User not authenticated");
 
             const { error: insertError } = await supabase
                 .from("Assignments")
-                .insert([
-                    {
-                        title: title,
-                        subject: subject,
-                        description: description,
-                        due_date: dueDate,
-                        user_id: userID,
-                        type: taskType,
-                        color: selectedColor
-                    }
-                ]);
+                .insert({
+                    title: title,
+                    subject: subject,
+                    description: description,
+                    due_date: dueDate,
+                    user_id: user.id,
+                    type: document.getElementById("taskType").value,
+                    color: document.getElementById('selectedColor').value
+                });
 
-            if (insertError) {
-                console.error(insertError);
-                // 2. Re-enable if there is an error so they can try again
-                insertAssignmentBtn.disabled = false;
-                insertAssignmentBtn.innerText = originalText;
-            } else {
-                window.location.href = 'assignments.html';
-            }
+            if (insertError) throw insertError;
+            window.location.href = 'assignments.html';
+
         } catch (err) {
-            console.error("System error:", err);
-            // Re-enable on system crash
+            console.error("Submission failed:", err);
+            alert(err.message || "Failed to save assignment.");
             insertAssignmentBtn.disabled = false;
-            insertAssignmentBtn.innerText = originalText;
+            insertAssignmentBtn.innerText = "Save Assignment";
         }
     });
 

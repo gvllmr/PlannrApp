@@ -145,12 +145,12 @@ function renderAssignments(assignmentsList) {
     </div>
     <div class="post-it-footer">
         <p class="due-date">📅 ${task.due_date}</p>
-        <div class="card-actions" style="margin-top: 15px; display: flex; gap: 10px; align-items: center;">
+        <div class="card-actions" style="margin-top: 10px; display: flex; justify-content: space-between; gap: 10px; align-items: center; width: 100%">
     ${!task.completed
             ? `<button class="complete-btn" data-id="${task.id}">
              <svg width="16" height="16" style="fill: currentColor; margin-right: 5px;">
                 <use xlink:href="#check2"></use>
-             </svg>
+             </svg> 
              Done
            </button>`
             : '<span class="status-badge">✅ Finished</span>'
